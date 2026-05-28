@@ -25,26 +25,45 @@ import sys
 from pathlib import Path
 
 
-def try_chromium(html: Path, pdf: Path) -> bool:
-    for binary in ("chromium", "chromium-browser", "google-chrome", "google-chrome-stable"):
+def find_chromium() -> str | None:
+    """Locate a Chromium-family browser: PATH first, then known app locations."""
+    for binary in ("chromium", "chromium-browser", "google-chrome",
+                   "google-chrome-stable", "microsoft-edge", "brave-browser"):
         path = shutil.which(binary)
-        if not path:
-            continue
-        cmd = [
-            path,
-            "--headless=new",
-            "--disable-gpu",
-            "--no-pdf-header-footer",
-            f"--print-to-pdf={pdf}",
-            html.resolve().as_uri(),
-        ]
-        try:
-            subprocess.run(cmd, check=True, capture_output=True, timeout=120)
-            if pdf.exists() and pdf.stat().st_size > 4096:
-                return True
-        except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
-            continue
-    return False
+        if path:
+            return path
+    # macOS app bundles (not on PATH) and common Windows install paths.
+    candidates = [
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "/Applications/Chromium.app/Contents/MacOS/Chromium",
+        "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+        "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+    ]
+    for c in candidates:
+        if Path(c).exists():
+            return c
+    return None
+
+
+def try_chromium(html: Path, pdf: Path) -> bool:
+    path = find_chromium()
+    if not path:
+        return False
+    cmd = [
+        path,
+        "--headless=new",
+        "--disable-gpu",
+        "--no-pdf-header-footer",
+        f"--print-to-pdf={pdf}",
+        html.resolve().as_uri(),
+    ]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, timeout=120)
+        return pdf.exists() and pdf.stat().st_size > 4096
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        return False
 
 
 def try_playwright(html: Path, pdf: Path) -> bool:

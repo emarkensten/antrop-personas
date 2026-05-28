@@ -1,6 +1,6 @@
 {
   "name": "antrop-personas",
-  "version": "0.10.0-rc1",
+  "version": "0.11.0-rc1",
   "description": "Antrop's qualitative-research pipeline for behavioural personas — from raw interview to brand-designed deliverable. Eleven skills: eight checkpoint-gated main-path steps (clean, analyse, frame-and-cluster, generate, validate, design, polish-language, package), two opt-in side-branches (interview-cards, compare-baseline), and a run-pipeline orchestrator for unattended end-to-end runs. Interactive by default (analyst owns every decision); an explicit autonomous mode applies and logs documented defaults for scheduled/overnight runs without reducing quality. Tuned for Opus 4.8 (xhigh effort on the quality-critical agents) and Sonnet 4.6 (Swedish polish + card rendering). Built from Naturvårdsverket v1 (2026), with pitfalls baked in as warnings.",
   "author": {
     "name": "Antrop"

@@ -19,6 +19,10 @@ If a hard dependency is missing, the depending step **must fail clearly** with t
 | `pdfplumber` | `compare-baseline` | Multi-column PDF persona-card extraction when `pypdf` fails | Falls back to `pypdf` text extraction. Surface a warning if extraction returns very little content per page. |
 | `weasyprint` | `card-renderer` (J1 fallback) | PDF rendering from HTML when headless-browser CLI is unavailable in the agent's environment | First-choice PDF rendering is via headless chromium (Bash). If unavailable, fall back to WeasyPrint; if both fail, hand PDF generation back to the parent skill explicitly with a `pdf_generation_blocked` flag. |
 | `tesseract` / `ocrmypdf` | `clean-interview` (A2 — scanned PDFs) | OCR for image-only PDFs | Ask the analyst whether to install + OCR, or convert by hand. Don't auto-OCR. |
+| `striprtf` | `clean-interview` (`.rtf` input) | Clean RTF→text extraction | Regex control-word strip fallback (lossier). |
+| `textutil` (macOS) / `antiword` / `libreoffice` | `clean-interview` (legacy `.doc` input) | Read binary `.doc` | Ask the analyst to re-save as `.docx` or paste the text. |
+
+`.vtt` / `.srt` (caption exports), `.json` (Otter/Whisper/Teams transcript exports), `.html`, `.csv`, `.txt`, `.md` need **no extra library** — they're handled with the standard library. See `references/input-ingestion.md` for the full per-format ingestion contract.
 
 ## Required skills (hard dependency)
 
@@ -35,7 +39,7 @@ If a hard dependency is missing, the depending step **must fail clearly** with t
 | Depending skill | Recommended skill | Used for | Behaviour if missing |
 |-----------------|-------------------|----------|----------------------|
 | `design-archetypes` / `interview-cards` | `gemini-image-gen` | Generating AI-photo portraits (D1b default policy) | Falls back to `initials-disc`. Surface a warning. **Never** falls through to stick figures or geometric placeholders. |
-| `design-archetypes` | `canvas-design` (D1) | Print-PDF iteration loop after the WeasyPrint/chromium first render | If missing, the WeasyPrint/chromium render is the final output. The `--use-canvas-design: yes` flag in `.persona-config.md` is silently ignored with a warning. |
+| `design-archetypes` | `canvas-design` (D1, **optional enhancement only**) | An extra automated polish loop on top of the already-print-ready render | **Not required.** The bundled template + `render-pdf.py` (Chrome/Chromium → Playwright → WeasyPrint) produce the complete, consistent A3 deliverable on their own. `canvas-design` is consulted only when the analyst opts in with `use-canvas-design: yes` AND it happens to be installed; otherwise the bundled render is the final output. Default `use-canvas-design: no`. |
 | `compare-baseline` | `xlsx` | Producing the comparison docx if the analyst asks for one | Falls back to writing only the markdown + HTML artefact. |
 | `analyse-themes`, `frame-and-cluster`, `validate-archetypes`, `generate-archetypes`, `polish-language` | Sub-agents (see `agents/` — `interview-reader`, `thematic-analyser`, `archetype-drafter`, `audit-runner`, `card-renderer`, `language-polisher`) | Parallel heavy reading for samples ≥4 interviews; `polish-language` delegates to `language-polisher` | Runs inline if sub-agents aren't available — slower and more context-heavy. Surface in chat that the run will be slower without sub-agent support. |
 

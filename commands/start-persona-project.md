@@ -31,9 +31,9 @@ Set up a new persona-research project in the user's working folder and orient th
 
    > "I found N interview-like files under `<path>`. Are these the interviews you want to analyse?"
 
-   The discovery is recursive — `Glob` with pattern `**/*.{pdf,docx,md,txt}` so subfolder names like `intervjuer/pdf/`, `Transkriberingar/`, `intervjuer_af/`, `cleaned interviews/` are all picked up automatically. Don't ask the analyst to specify the subfolder.
+   The discovery is recursive — `Glob` with pattern `**/*.{pdf,docx,doc,md,markdown,txt,text,rtf,vtt,srt,json,html,htm,csv}` so subfolder names like `intervjuer/pdf/`, `Transkriberingar/`, `intervjuer_af/`, `cleaned interviews/`, `Otter exports/` are all picked up automatically. Don't ask the analyst to specify the subfolder. Triage the hits into likely-interviews vs support-material (consent forms, guide, notes) before showing them — see `${CLAUDE_PLUGIN_ROOT}/references/input-ingestion.md`.
 
-   If the list looks wrong (too many or too few), let the analyst narrow it via a glob pattern or by pointing at a different subfolder. **Do not assume `01-interviews/` is the only valid location.**
+   If the list looks wrong (too many or too few), let the analyst narrow it via a glob pattern or by pointing at a different subfolder. **Do not assume `01-interviews/` is the only valid location**, and don't assume a fixed file type — analysts arrive with `.vtt`/`.srt` caption exports, Otter/Teams `.json`, `.rtf`, legacy `.doc`, and concatenated single-file transcripts. The full format + awkward-structure contract is in `references/input-ingestion.md`.
 
 4. **Ask three setup questions with `AskUserQuestion`** before scaffolding. These three answers cascade through every later step, so capture them up front and write them into `state.json`:
 

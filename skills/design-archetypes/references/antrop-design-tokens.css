@@ -1,341 +1,287 @@
-/* Antrop persona-card design tokens
- * Source of truth: ../antrop-design-spec.md
+/* Antrop persona-card design tokens — A3 landscape, double-sided.
+ * Source of truth for layout, colour, and type. Self-contained: the bundled
+ * persona-card-template.html + this file render a complete, print-ready card
+ * via headless chromium / weasyprint (references/render-pdf.py). No external
+ * design tool is required — canvas-design is an optional polish loop only.
  *
- * Copy into the <style> block of persona-cards.html, or import as a stylesheet.
- * Hex values are placeholders sized to the screenshots from NV v1 — confirm
- * against Antrop brand guidelines before final delivery.
+ * Fonts: a Google-Fonts <link> in the template upgrades the look when online;
+ * the fallback stacks below are chosen so the card still reads as a deliberate
+ * editorial object on a plain offline host. For pixel-locked print, drop the
+ * licensed TT Norms / Martian Mono woff2 into the project and they win the cascade.
  */
 
 :root {
-  /* Palette tokens — palette selection happens via the <body class="palette-…">
-   * class (P1-fix). Three palettes shipped:
-   *   • palette-light    (default — light surfaces, per-persona accent rule at the card top)
-   *   • palette-dark     (Antrop dark surfaces, kept for explicit opt-in)
-   *   • palette-client   (read from personas-project/<project>/client-palette.css)
-   *
-   * Set in .persona-config.md `brand-overrides.palette`. The renderer applies
-   * the class to <body> at template fill time.
+  /* ---- Light palette (default since v0.9.0-rc5) ---- */
+  --light-bg:           #FBF8F2;   /* warm off-white card surface */
+  --light-surface-2:    #F3EEE3;   /* faint inset panels (scale track, quote band) */
+  --light-text:         #1B2429;   /* near-black text */
+  --light-muted:        #5C6670;   /* secondary text */
+  --light-accent-green: #1B4332;   /* primary-1 accent */
+  --light-accent-navy:  #1E3A5F;   /* primary-2 accent */
+  --light-accent-red:   #9B2D2D;   /* supplemental / negative-warning */
+  --light-accent-gold:  #8B6914;   /* outlier accent */
+  --light-rule:         rgba(27,36,41,0.16);   /* hairline borders */
+  --light-rule-soft:    rgba(27,36,41,0.08);
+
+  /* ---- Dark palette (opt-in via body.palette-dark — Antrop legacy world) ---- */
+  --dark-navy:      #0E2A3A;  --dark-navy-text:  #BFD9E2;  --dark-turquoise: #5FB4B5;
+  --dark-wine:      #4F1A2E;  --dark-wine-text:  #F2D4D9;  --dark-coral:     #E07A5F;
+  --dark-forest:    #1F3B2E;  --dark-cream:      #F5E6A8;  --dark-yellow:    #E5C547;
+  --paper-white:    #FFFFFF;
+
+  /* ---- Per-role assignments (default = light palette) ---- */
+  --primary-1-bg: var(--light-bg);    --primary-1-text: var(--light-text);  --primary-1-accent: var(--light-accent-green);
+  --primary-2-bg: var(--light-bg);    --primary-2-text: var(--light-text);  --primary-2-accent: var(--light-accent-navy);
+  --supplemental-bg: var(--light-bg); --supplemental-text: var(--light-text); --supplemental-accent: var(--light-accent-red);
+  --negative-bg: var(--dark-cream);   --negative-text: var(--light-text);   --negative-accent: var(--light-accent-red);
+  --outlier-bg: #FFFFFF;              --outlier-text: var(--light-text);    --outlier-accent: var(--light-accent-gold);
+
+  /* Conditional indirect roles (only when the archetype carries the tag) */
+  --customer-accent: #3B3B6D;   /* indigo — buys but does not use */
+  --served-accent:   #A6502A;   /* terracotta — benefits indirectly */
+
+  /* Strategy banner (negative persona) — uses the dark navy world for contrast */
+  --strategy-bg:   var(--dark-navy);
+  --strategy-text: var(--dark-navy-text);
+
+  /* ---- Typography ----
+   * Display: TT Norms (licensed) → Manrope (OFL, via CDN) → system grotesque.
+   * Serif:   Playfair Display (OFL) → Georgia.
+   * Mono:    Martian Mono (licensed) → JetBrains Mono (OFL) → system mono.
+   * Body:    Source Serif / system — set to a humanist sans for legibility.
    */
-
-  /* Dark palette (opt-in via palette: dark — Antrop's legacy brand colours) */
-  --dark-navy:       #0E2A3A;        /* primary navy — cover, primary-2 surface */
-  --dark-navy-text:  #BFD9E2;        /* light blue text on navy */
-  --dark-turquoise:  #5FB4B5;        /* turquoise accent */
-
-  --dark-wine:       #4F1A2E;        /* wine red — primary-1 surface */
-  --dark-wine-text:  #F2D4D9;        /* light pink text on wine */
-  --dark-coral:      #E07A5F;        /* coral accent */
-
-  --dark-forest:     #1F3B2E;        /* dark green — supplemental surface */
-  --dark-cream:      #F5E6A8;        /* light yellow text/surface */
-  --dark-yellow:     #E5C547;        /* yellow accent */
-
-  --paper-white:     #FFFFFF;        /* outlier surface */
-
-  /* Light palette (default since v0.9.0-rc5) */
-  --light-bg:             #FBF8F2;   /* warm off-white card surface */
-  --light-text:           #1B2429;   /* near-black text */
-  --light-accent-green:   #1B4332;   /* primary-1 accent */
-  --light-accent-navy:    #1E3A5F;   /* primary-2 accent */
-  --light-accent-red:     #9B2D2D;   /* supplemental / negative-warning */
-  --light-accent-gold:    #8B6914;   /* outlier accent */
-  --light-rule:           #1B242933; /* hairline borders */
-
-  /* Per-role assignments — defaults map to light palette */
-  --primary-1-bg:        var(--light-bg);
-  --primary-1-text:      var(--light-text);
-  --primary-1-accent:    var(--light-accent-green);
-
-  --primary-2-bg:        var(--light-bg);
-  --primary-2-text:      var(--light-text);
-  --primary-2-accent:    var(--light-accent-navy);
-
-  --supplemental-bg:     var(--light-bg);
-  --supplemental-text:   var(--light-text);
-  --supplemental-accent: var(--light-accent-red);
-
-  --negative-bg:         var(--dark-cream);   /* light yellow for negative — still visually breaks */
-  --negative-text:       var(--light-text);
-  --negative-accent:     var(--light-text);
-
-  --outlier-bg:          #FFFFFF;
-  --outlier-text:        var(--light-text);
-  --outlier-accent:      var(--light-accent-gold);
-
-  /* Conditional role accents (only used when an archetype carries the role tag) */
-  --customer-accent:     #3B3B6D;   /* indigo — buys but does not use */
-  --served-accent:       #A6502A;   /* terracotta — benefits indirectly */
-
-  /* Typography
-   * D4 — open-source fallback stack. TT Norms and Martian Mono are commercial
-   * and have no public CDN. The fallbacks below are Google Fonts equivalents
-   * that match the visual feel — load these in <head>:
-   *
-   *   <link rel="preconnect" href="https://fonts.googleapis.com">
-   *   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   *   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..900&family=Plus+Jakarta+Sans:wght@200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Familjen+Grotesk:wght@400..700&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
-   *
-   * If TT Norms / Martian Mono are licensed locally for the project,
-   * include them ahead of the fallback families in the stack.
-   */
-  --font-display: "TT Norms", "Manrope", "Plus Jakarta Sans", "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "TT Norms Pro", "TT Norms", "Manrope", "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
   --font-serif:   "Playfair Display", Georgia, "Times New Roman", serif;
-  --font-mono:    "Martian Mono", "JetBrains Mono", "IBM Plex Mono", "Courier New", monospace;
-  --font-body:    "Inter", "Manrope", "Helvetica Neue", Arial, sans-serif;
+  --font-mono:    "Martian Mono", "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, "Courier New", monospace;
+  --font-body:    "Manrope", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
 
-  /* Type scale — A3 landscape */
-  --size-persona-name: 96pt;
-  --size-role-tagline: 36pt;
+  /* ---- Type scale (A3 landscape) ---- */
+  --size-persona-name: 68pt;
+  --size-role-tagline: 26pt;
+  --size-sketch:       11.5pt;
   --size-body:         11pt;
-  --size-label:         9pt;
-  --size-quote:        22pt;
+  --size-label:         8.5pt;
+  --size-quote:        19pt;
+  --letter-spacing-mono: 0.14em;
 
-  --letter-spacing-mono: 0.12em;
+  /* ---- Spatial rhythm ---- */
+  --pad-x: 26mm;
+  --pad-y: 16mm;
+  --gap:    7mm;
 }
 
-/* A3 landscape print */
-@page {
-  size: A3 landscape;
-  margin: 0;
-}
-
+/* ===== Print setup ===== */
+@page { size: A3 landscape; margin: 0; }
 @media print {
-  body { margin: 0; }
+  html, body { margin: 0; padding: 0; }
   .persona-card { page-break-after: always; }
   .persona-card:last-child { page-break-after: auto; }
 }
+* { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
-/* Base persona card */
+body {
+  margin: 0;
+  background: #d9d4c8;          /* neutral mat behind the pages for on-screen review */
+  font-family: var(--font-body);
+  color: var(--light-text);
+}
+
+/* ===== Base card ===== */
 .persona-card {
   width: 420mm;
   height: 297mm;
-  padding: 22mm 26mm;
+  padding: var(--pad-y) var(--pad-x);
   box-sizing: border-box;
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  gap: 8mm;
-  border-radius: 0 !important;   /* never round the A3 page */
+  gap: var(--gap);
   position: relative;
   overflow: hidden;
+  border-radius: 0 !important;   /* never round an A3 page */
 }
 
-/* Role variants */
-.persona-card.primary-1     { background: var(--primary-1-bg);     color: var(--primary-1-text); }
-.persona-card.primary-2     { background: var(--primary-2-bg);     color: var(--primary-2-text); }
-.persona-card.secondary     { background: var(--primary-2-bg);     color: var(--primary-2-text); }
-.persona-card.supplemental  { background: var(--supplemental-bg);  color: var(--supplemental-text); }
-.persona-card.customer      { background: var(--light-bg);         color: var(--light-text); --accent: var(--customer-accent); }
-.persona-card.served        { background: var(--light-bg);         color: var(--light-text); --accent: var(--served-accent); }
-.persona-card.negative      { background: var(--negative-bg);      color: var(--negative-text); }
-.persona-card.outlier       { background: var(--outlier-bg);       color: var(--outlier-text); border: 0.5pt solid var(--outlier-text); }
+/* Role surfaces */
+.persona-card.primary-1    { background: var(--primary-1-bg);    color: var(--primary-1-text);    --accent: var(--primary-1-accent); }
+.persona-card.primary-2,
+.persona-card.secondary    { background: var(--primary-2-bg);    color: var(--primary-2-text);    --accent: var(--primary-2-accent); }
+.persona-card.supplemental { background: var(--supplemental-bg); color: var(--supplemental-text); --accent: var(--supplemental-accent); }
+.persona-card.customer     { background: var(--light-bg);        color: var(--light-text);        --accent: var(--customer-accent); }
+.persona-card.served       { background: var(--light-bg);        color: var(--light-text);        --accent: var(--served-accent); }
+.persona-card.negative     { background: var(--negative-bg);     color: var(--negative-text);     --accent: var(--negative-accent); }
+.persona-card.outlier      { background: var(--outlier-bg);      color: var(--outlier-text);      --accent: var(--outlier-accent); border: 0.4pt solid var(--light-rule); }
 
-/* Customer & Served indirect-role banner (P1-customer).
- * Sits above the topbar to communicate the role at a glance.
+/* Per-persona accent rule along the top edge (light palette) */
+body.palette-light .persona-card { border-top: 5mm solid var(--accent, currentColor); }
+
+/* ===== FRONT layout =====
+ * rows:  topbar / hero(portrait + identity + scales) / cooper(3 cols) / quote
  */
-.persona-card .role-banner {
-  background: var(--accent, currentColor);
-  color: var(--light-bg);
-  font-family: var(--font-mono);
-  font-size: var(--size-label);
-  letter-spacing: var(--letter-spacing-mono);
-  text-transform: uppercase;
-  padding: 6pt 26mm;
-  margin: 0 -26mm 6mm -26mm;
-  text-align: center;
-}
-.persona-card.customer .role-banner::before { content: "● KÖPER · ANVÄNDER INTE — "; opacity: 0.7; }
-.persona-card.served   .role-banner::before { content: "● GYNNAS · INTERAGERAR INTE — "; opacity: 0.7; }
-body[lang="en"] .persona-card.customer .role-banner::before { content: "● BUYS · DOESN'T USE — "; opacity: 0.7; }
-body[lang="en"] .persona-card.served   .role-banner::before { content: "● BENEFITS · DOES NOT INTERACT — "; opacity: 0.7; }
+.persona-card.front { grid-template-rows: auto auto 1fr auto auto; }
 
-/* Goal hierarchy sub-goals (P2-fix) — Life and Experience goals as smaller-print
- * sub-items under the End goals, separated by a mono divider.
- */
-.persona-card .drivers .sub-goals {
-  margin-top: 6mm;
-  padding-top: 4mm;
-  border-top: 0.5pt solid currentColor;
-  opacity: 0.85;
+.topbar {
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-bottom: 0.4pt solid var(--light-rule);
+  padding-bottom: 4mm;
 }
-.persona-card .drivers .sub-goals .sub-divider {
-  font-family: var(--font-mono);
-  font-size: 7pt;
-  letter-spacing: var(--letter-spacing-mono);
-  text-transform: uppercase;
-  opacity: 0.6;
-  margin: 0 0 2mm 0;
-}
-.persona-card .drivers .sub-goals .life-goal,
-.persona-card .drivers .sub-goals .experience-goal {
-  font-size: 9pt;
-  font-style: italic;
-  line-height: 1.35;
-  margin: 0 0 2mm 0;
-}
-.persona-card .drivers .sub-goals .label {
-  font-family: var(--font-mono);
-  font-style: normal;
-  font-size: 7pt;
-  letter-spacing: var(--letter-spacing-mono);
-  text-transform: uppercase;
-  margin-right: 4pt;
-  opacity: 0.7;
-}
-
-/* On the light palette, give each card an accent rule at the top so
- * it still reads as the persona's own colour world even though the surface is uniform.
- */
-body.palette-light .persona-card { border-top: 4mm solid currentColor; }
-body.palette-light .persona-card.primary-1     { border-top-color: var(--light-accent-green); }
-body.palette-light .persona-card.primary-2     { border-top-color: var(--light-accent-navy); }
-body.palette-light .persona-card.supplemental  { border-top-color: var(--light-accent-red); }
-body.palette-light .persona-card.outlier       { border-top-color: var(--light-accent-gold); }
-
-/* Dark palette — opt-in via <body class="palette-dark"> (Antrop's legacy brand world) */
-body.palette-dark .persona-card.primary-1     { background: var(--dark-wine);   color: var(--dark-wine-text);  --accent: var(--dark-coral); }
-body.palette-dark .persona-card.primary-2     { background: var(--dark-navy);   color: var(--dark-navy-text);  --accent: var(--dark-turquoise); }
-body.palette-dark .persona-card.supplemental  { background: var(--dark-forest); color: var(--dark-cream);      --accent: var(--dark-yellow); }
-body.palette-dark .persona-card.negative      { background: var(--dark-cream);  color: var(--dark-navy);       --accent: var(--dark-navy); }
-body.palette-dark .persona-card.outlier       { background: var(--paper-white); color: var(--dark-navy);       --accent: var(--dark-wine); border: 0.5pt solid var(--dark-navy); }
-
-/* Client palette — <body class="palette-client"> + import of client-palette.css.
- * The client CSS file should redefine --primary-1-bg / --primary-1-text /
- * --primary-1-accent (and the others) under :root or under body.palette-client.
- */
-
-/* Typography */
-.persona-name        { font-family: var(--font-display); font-size: var(--size-persona-name); font-weight: 900; line-height: 0.9; }
-.persona-age         { font-weight: 300; opacity: 0.6; }
-.role-tagline        { font-family: var(--font-serif); font-style: italic; font-size: var(--size-role-tagline); line-height: 1.05; }
 .eyebrow, .composite, .theme-chip, .quote-attribution, .page-number {
   font-family: var(--font-mono);
   letter-spacing: var(--letter-spacing-mono);
   text-transform: uppercase;
   font-size: var(--size-label);
 }
-.pull-quote          { font-family: var(--font-serif); font-style: italic; font-size: var(--size-quote); line-height: 1.3; }
+.eyebrow .dot { color: var(--accent); }
+.page-number { opacity: 0.55; }
 
-/* Illustration disc */
-.illustration-disc {
-  width: 110mm;
-  height: 110mm;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  display: flex; align-items: center; justify-content: center;
-  padding: 5%;
-  box-sizing: border-box;
-}
-
-/* Theme chips */
-.theme-chip {
-  display: inline-block;
-  padding: 4px 12px;
-  border: 0.5pt solid currentColor;
-  border-radius: 20px;
-  margin-right: 6px;
-  margin-bottom: 6px;
-}
-
-/* Front content grid — illustration disc + 3 Cooper sections (G9-fix).
- * Drivkrafter, Smärtor, Behov each get their own column on the front card.
- * The two-column legacy (GOALS / FRUSTRATIONS) is preserved as a fallback
- * via the .card-front-columns-2 class on the body when the analyst sets
- * `card-front-columns: 2` in .persona-config.md.
- */
-.persona-card.front .content-grid {
+/* Hero: portrait left, identity + behaviour scales right */
+.hero {
   display: grid;
-  grid-template-columns: 110mm 1fr 1fr 1fr;
-  gap: 8mm;
+  grid-template-columns: 92mm 1fr;
+  gap: 12mm;
   align-items: start;
 }
+.persona-name { font-family: var(--font-display); font-size: var(--size-persona-name); font-weight: 800; line-height: 0.9; letter-spacing: -0.02em; margin: 0; }
+.persona-age  { font-weight: 300; opacity: 0.55; }
+.role-tagline { font-family: var(--font-serif); font-style: italic; font-size: var(--size-role-tagline); line-height: 1.05; margin: 2mm 0 0; color: var(--accent); }
+.composite    { display: block; margin-top: 4mm; color: var(--light-muted); }
+.sketch       { font-size: var(--size-sketch); line-height: 1.4; margin: 4mm 0 0; max-width: 165mm; }
 
-body.card-front-columns-2 .persona-card.front .content-grid {
-  grid-template-columns: 110mm 1fr 1fr;   /* legacy 2-column variant */
+/* Portrait disc (AI photo) + initials fallback */
+.portrait-disc, .initials-disc {
+  width: 92mm; height: 92mm; border-radius: 50%; overflow: hidden;
+  box-sizing: border-box;
 }
-body.card-front-columns-2 .persona-card.front .needs {
-  display: none;   /* in the 2-column variant, needs move to the back */
-}
-
-.persona-card.front .drivers,
-.persona-card.front .pains,
-.persona-card.front .needs {
-  min-width: 0;
-}
-
-.persona-card.front .drivers ul,
-.persona-card.front .pains ul,
-.persona-card.front .needs ul {
-  margin: 0;
-  padding-left: 1em;
+.portrait-disc { background: var(--light-surface-2); border: 0.5mm solid var(--accent); }
+.portrait-disc img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.initials-disc {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent); color: var(--light-bg);
+  font-family: var(--font-display); font-size: 46pt; font-weight: 800; letter-spacing: -0.03em;
 }
 
-.persona-card.front .drivers li,
-.persona-card.front .pains li,
-.persona-card.front .needs li {
-  margin-bottom: 6pt;
-}
+/* Behaviour-variable dot-scale (G10) — lives under the identity block.
+ * Compact: label + dots on one row, end-labels as a thin sub-row. */
+.behavior-scale { display: grid; gap: 3mm; margin-top: 6mm; max-width: 165mm; }
+.behavior-scale .scale-row { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 6mm; }
+.behavior-scale .scale-label { font-family: var(--font-mono); font-size: var(--size-label); letter-spacing: var(--letter-spacing-mono); text-transform: uppercase; margin: 0; }
+.behavior-scale .scale-ends  { grid-column: 1 / -1; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 6.5pt; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.5; margin: 0.5mm 0 0; }
+.behavior-scale .scale-dots  { font-size: 13pt; letter-spacing: 0.16em; color: var(--accent); white-space: nowrap; margin: 0; }
+.behavior-scale .scale-dots .on  { color: var(--accent); }
+.behavior-scale .scale-dots .off { color: var(--light-rule); }
 
-/* Negative-persona strategy banner */
+/* Cooper band: three equal columns */
+.cooper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 11mm;
+  border-top: 0.4pt solid var(--light-rule);
+  padding-top: 6mm;
+  align-content: start;
+}
+.cooper section { min-width: 0; }
+.cooper h2 {
+  font-family: var(--font-mono); font-size: var(--size-label); font-weight: 600;
+  letter-spacing: var(--letter-spacing-mono); text-transform: uppercase;
+  margin: 0 0 3.5mm; padding-bottom: 1.5mm; border-bottom: 1.5mm solid var(--accent);
+  display: inline-block;
+}
+.cooper ul { margin: 0; padding-left: 4.5mm; }
+.cooper li { font-size: var(--size-body); line-height: 1.35; margin-bottom: 3mm; }
+
+/* Meta row (AI disclaimer + audit legend) — static, sits above the quote band */
+.card-meta { display: flex; justify-content: space-between; align-items: center; }
+
+/* Goal hierarchy (P2-fix) — Life / Experience goals as quiet sub-items under drivers */
+.drivers .sub-goals { margin-top: 5mm; padding-top: 4mm; border-top: 0.4pt solid var(--light-rule-soft); }
+.drivers .sub-goals .sub-divider,
+.drivers .sub-goals .label { font-family: var(--font-mono); font-size: 7pt; letter-spacing: var(--letter-spacing-mono); text-transform: uppercase; opacity: 0.6; }
+.drivers .sub-goals .sub-divider { display: block; margin-bottom: 2mm; }
+.drivers .sub-goals p { font-size: 9.5pt; font-style: italic; line-height: 1.35; margin: 0 0 2mm; }
+.drivers .sub-goals .label { font-style: normal; margin-right: 3pt; }
+
+/* Theme chips (under the needs column) */
+.themes { margin-top: 5mm; }
+.theme-chip { display: inline-block; padding: 2.5pt 9pt; border: 0.5pt solid var(--accent); border-radius: 20px; margin: 0 4pt 4pt 0; color: var(--accent); }
+
+/* Pull-quote band */
+.quote-band {
+  background: var(--light-surface-2);
+  margin: 0 calc(-1 * var(--pad-x)) calc(-1 * var(--pad-y));
+  padding: 7mm var(--pad-x);
+  border-top: 1.5mm solid var(--accent);
+}
+.pull-quote { font-family: var(--font-serif); font-style: italic; font-size: var(--size-quote); line-height: 1.28; margin: 0; }
+.pull-quote::before { content: "\201C"; color: var(--accent); }
+.pull-quote::after  { content: "\201D"; color: var(--accent); }
+.quote-attribution { display: block; margin-top: 4mm; opacity: 0.6; }
+
+/* Indirect-role banner (customer / served) */
+.role-banner {
+  background: var(--accent); color: var(--light-bg);
+  font-family: var(--font-mono); font-size: var(--size-label);
+  letter-spacing: var(--letter-spacing-mono); text-transform: uppercase;
+  padding: 5pt var(--pad-x); margin: 0 calc(-1 * var(--pad-x)) 4mm; text-align: center;
+}
+.persona-card.customer .role-banner::before { content: "● KÖPER · ANVÄNDER INTE — "; opacity: 0.7; }
+.persona-card.served   .role-banner::before { content: "● GYNNAS · INTERAGERAR INTE — "; opacity: 0.7; }
+body[lang="en"] .persona-card.customer .role-banner::before { content: "● BUYS · DOESN'T USE — "; opacity: 0.7; }
+body[lang="en"] .persona-card.served   .role-banner::before { content: "● BENEFITS · DOESN'T INTERACT — "; opacity: 0.7; }
+
+/* Negative-persona strategy banner (now uses defined tokens) */
 .strategy-banner {
-  background: var(--antrop-morkbla);
-  color: var(--antrop-ljusbla);
-  font-family: var(--font-mono);
-  font-size: var(--size-label);
-  letter-spacing: var(--letter-spacing-mono);
-  padding: 10px 26mm;
-  margin: 0 -26mm -22mm -26mm;     /* extend to page edge */
+  background: var(--strategy-bg); color: var(--strategy-text);
+  font-family: var(--font-mono); font-size: var(--size-label);
+  letter-spacing: var(--letter-spacing-mono); text-transform: uppercase;
+  padding: 8pt var(--pad-x); margin: 0 calc(-1 * var(--pad-x)) calc(-1 * var(--pad-y));
 }
 
-/* Behaviour-variable dot-scale (G10).
- * Card-renderer populates <aside class="behavior-scale"> with 3–5 rows of
- * variables that show the highest between-cluster variance.
- */
-.behavior-scale {
-  display: flex;
-  flex-direction: column;
-  gap: 6mm;
-  padding: 0;
+/* ===== BACK layout: narrative + quote sidebar ===== */
+.persona-card.back { grid-template-rows: auto 1fr auto; }
+.persona-card.back .narrative {
+  font-family: var(--font-body); font-size: 13pt; line-height: 1.6;
+  column-count: 2; column-gap: 16mm; max-width: 360mm; margin-top: 4mm;
+}
+.persona-card.back .narrative p { margin: 0 0 1em; break-inside: avoid; }
+.persona-card.back .narrative p:first-of-type::first-letter {
+  font-family: var(--font-serif); font-size: 46pt; line-height: 0.8;
+  float: left; padding: 2mm 3mm 0 0; color: var(--accent);
+}
+.persona-card.back .pullquotes-sidebar {
+  border-top: 0.4pt solid var(--light-rule); padding-top: 7mm;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12mm;
+}
+.persona-card.back .pullquotes-sidebar blockquote { margin: 0; font-family: var(--font-serif); font-style: italic; font-size: 14pt; line-height: 1.3; }
+.persona-card.back .pullquotes-sidebar .attribution { font-family: var(--font-mono); letter-spacing: var(--letter-spacing-mono); text-transform: uppercase; font-size: var(--size-label); opacity: 0.6; margin-top: 4mm; }
+
+/* ===== Audit badges (E2) ===== */
+.audit-badge { display: inline-block; width: 9pt; height: 9pt; border-radius: 50%; vertical-align: middle; margin-left: 5pt; }
+.audit-badge.thin       { background: #E5C547; }
+.audit-badge.over-reach { background: #E07A5F; }
+.audit-badge.ungrounded { background: #C0392B; }
+.audit-legend { font-family: var(--font-mono); font-size: 7pt; letter-spacing: var(--letter-spacing-mono); text-transform: uppercase; opacity: 0.6; display: flex; gap: 12px; }
+
+/* Autonomous-run review banner (mode: auto + open criticals) */
+.review-banner {
+  background: var(--light-accent-red); color: #fff;
+  font-family: var(--font-mono); font-size: 8pt; font-weight: 600;
+  letter-spacing: var(--letter-spacing-mono); text-transform: uppercase;
+  padding: 5pt var(--pad-x); margin: 0 calc(-1 * var(--pad-x)) 4mm; text-align: center;
 }
 
-.behavior-scale .scale-row {
-  display: flex;
-  flex-direction: column;
-  gap: 2pt;
-}
+.ai-disclaimer { font-family: var(--font-mono); font-size: 7pt; letter-spacing: var(--letter-spacing-mono); text-transform: uppercase; opacity: 0.5; margin: 0; }
 
-.behavior-scale .scale-label {
-  font-family: var(--font-mono);
-  font-size: var(--size-label);
-  letter-spacing: var(--letter-spacing-mono);
-  text-transform: uppercase;
-  margin: 0;
-}
+/* ===== Dark palette (opt-in) ===== */
+body.palette-dark .persona-card.primary-1    { background: var(--dark-wine);   color: var(--dark-wine-text); --accent: var(--dark-coral); }
+body.palette-dark .persona-card.primary-2    { background: var(--dark-navy);   color: var(--dark-navy-text); --accent: var(--dark-turquoise); }
+body.palette-dark .persona-card.supplemental { background: var(--dark-forest); color: var(--dark-cream);     --accent: var(--dark-yellow); }
+body.palette-dark .persona-card.negative     { background: var(--dark-cream);  color: var(--dark-navy);      --accent: var(--dark-navy); }
+body.palette-dark .persona-card.outlier      { background: var(--paper-white); color: var(--dark-navy);      --accent: var(--dark-wine); border: 0.4pt solid var(--dark-navy); }
+body.palette-dark .quote-band,
+body.palette-dark .behavior-scale .scale-dots .off { color: rgba(255,255,255,0.18); }
+body.palette-dark .quote-band { background: rgba(255,255,255,0.05); }
 
-.behavior-scale .scale-dots {
-  font-family: var(--font-mono);
-  font-size: 14pt;
-  letter-spacing: 0.10em;
-  margin: 0;
-  color: var(--accent, currentColor);
-}
+/* ===== Legacy two-column front (card-front-columns: 2) ===== */
+body.card-front-columns-2 .cooper { grid-template-columns: repeat(2, 1fr); }
+body.card-front-columns-2 .cooper .needs { display: none; }   /* needs moves to the back */
 
-.behavior-scale .scale-ends {
-  font-family: var(--font-mono);
-  font-size: 7pt;
-  letter-spacing: var(--letter-spacing-mono);
-  text-transform: uppercase;
-  opacity: 0.6;
-  margin: 0;
-}
-
-/* When behavior-scale is present, the front grid grows a fifth column. */
-.persona-card.front:has(.behavior-scale) .content-grid {
-  grid-template-columns: 110mm 70mm 1fr 1fr 1fr;
-}
-body.card-front-columns-2 .persona-card.front:has(.behavior-scale) .content-grid {
-  grid-template-columns: 110mm 70mm 1fr 1fr;
-}
-
-/* Forbidden — guard rules */
+/* ===== Guard rules ===== */
 .persona-card * { box-shadow: none !important; }
 .persona-card .emoji-avatar { display: none !important; }   /* no emoji avatars, ever */

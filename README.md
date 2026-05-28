@@ -2,13 +2,13 @@
 
 Antrop's qualitative-research pipeline for behavioural personas — from raw interview to brand-designed deliverable. **Eleven** skills — ten checkpoint-gated steps that keep the analyst as the decision-maker and Claude as the heavy-lifter, plus a `run-pipeline` orchestrator for unattended end-to-end runs.
 
-Built from the Naturvårdsverket v1 project (Stockholm, 2026); v0.10.0-rc1 bakes in lessons from the second end-to-end test (2026-05-28) — Excel as the working format for frame-and-cluster, narrative prose on the back of every persona card, AI-photo portraits with locked series style, baseline comparison as a built-in capability, and a dedicated language-polish pass.
+Built from the Naturvårdsverket v1 project (Stockholm, 2026); v0.11.0-rc1 bakes in lessons from the second end-to-end test (2026-05-28) — Excel as the working format for frame-and-cluster, narrative prose on the back of every persona card, AI-photo portraits with locked series style, baseline comparison as a built-in capability, and a dedicated language-polish pass.
 
 ## What this plugin does
 
 It walks an analyst through the full pipeline:
 
-1. **clean-interview** — raw `.pdf` / `.docx` / `.md` / `.txt` transcript → cleaned, anonymised, analysis-ready (A2). Recursive auto-discovery of interviews in any subfolder (A1). Auto-PII-scan when skipped (E3).
+1. **clean-interview** — raw transcript → cleaned, anonymised, analysis-ready (A2). Accepts whatever the analyst already has: `.pdf`, `.docx`/`.doc`, `.rtf`, `.md`/`.txt`, `.vtt`/`.srt` caption exports, Otter/Whisper/Teams `.json`, `.html`, `.csv`, or pasted text. Recursive auto-discovery in any subfolder, with interview-vs-support-material triage and awkward-structure handling (one file → many interviews, etc.) — see `references/input-ingestion.md`. Auto-PII-scan when skipped (E3).
 2. **analyse-themes** — N cleaned interviews → 4–7 cross-cutting themes
 3. **frame-and-cluster** — themes → **behavioural-variables.xlsx** (primary artefact, three sheets — B1) + emergent clusters + cluster plot. Non-skippable analyst checkpoint after Produce (B2).
 4. **generate-archetypes** — clusters → Cooper-style archetypes **with narrative prose ≥ 200 words per archetype** (C1-C2). Demographics verified against cleaned interviews (E1). Non-skippable checkpoint after Produce (I1).
@@ -104,7 +104,7 @@ See `DEPENDENCIES.md` for graceful-fail behaviour.
 ### Recommended dependencies
 
 - `gemini-image-gen` — AI-photo portraits (D1b default policy)
-- `canvas-design` — print-PDF iteration loop (D1)
+- `canvas-design` — **optional enhancement only** (OFF by default). The bundled card template + `render-pdf.py` already produce the complete, print-ready A3 deliverable; canvas-design just adds an extra automated polish loop if you happen to have it.
 - Python libraries: `pdfplumber` (PDF baseline extraction fallback), `weasyprint` (PDF fallback when chromium unavailable)
 
 ## Key design decisions
@@ -117,7 +117,8 @@ See `DEPENDENCIES.md` for graceful-fail behaviour.
 
 ## Reference material in this plugin
 
-- `references/cross-cutting-principles.md` — the five principles every skill follows
+- `references/cross-cutting-principles.md` — the five principles every skill follows + the autonomous-mode contract
+- `references/input-ingestion.md` — discovery, format conversion, and awkward-structure handling for arbitrary analyst input
 - `references/pitfalls-from-nv-v1.md` — concrete misstakes from the Naturvårdsverket project, mapped to the skill they apply to
 - `skills/design-archetypes/references/antrop-design-spec.md` — full Antrop persona-card brand spec
 - `skills/design-archetypes/references/pre-design-checklist.md` — eight pre-design questions, with defaults
@@ -133,7 +134,7 @@ This plugin is currently tuned for Antrop's workflow. If you fork it for another
 
 ## Version
 
-**0.10.0-rc1** — release candidate. Incorporates all HIGH + MEDIUM improvements from `IMPROVEMENT_SPEC_v0.9.0-rc4.md` and the post-rc3 E2E test (2026-05-28).
+**0.11.0-rc1** — release candidate. Incorporates all HIGH + MEDIUM improvements from `IMPROVEMENT_SPEC_v0.9.0-rc4.md` and the post-rc3 E2E test (2026-05-28).
 
 New in 0.10.0: **autonomous mode** (`process.mode: auto`) and the **`run-pipeline`** orchestrator skill, for unattended scheduled/overnight runs that produce full-quality personas (AI portraits + print-PDF) with documented defaults logged for a morning review. Distinct from `dry-run` and `skip-checkpoints`.
 

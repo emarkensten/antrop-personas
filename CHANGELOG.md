@@ -6,7 +6,31 @@ The early release-candidate history (rc5–rc7) was not documented in detail at 
 time; the entries below reconstruct it honestly from the manifest, the validation
 report, and the source. Only the headline changes are recorded for those.
 
-## [0.10.0-rc1] — 2026-05 (current)
+## [0.11.0-rc1] — 2026-05 (current)
+
+- **Robust input ingestion.** Discovery and conversion now accept whatever the
+  analyst already has, in whatever folder layout: added `.doc`, `.rtf`,
+  `.vtt`/`.srt` (caption/auto-transcript exports), `.json` (Otter/Whisper/Teams),
+  `.html`, and `.csv` on top of `.pdf`/`.docx`/`.md`/`.txt`. New
+  `references/input-ingestion.md` contract covers arbitrary folder names,
+  interview-vs-support-material triage, and awkward structures (one file →
+  many interviews, one participant split across files, mixed cleaned+raw),
+  plus stable participant-ID inference recorded in `01-interviews/id-map.md`.
+- **Self-contained, redesigned A3 cards.** Rebuilt the double-sided persona-card
+  template + tokens: fixed the undefined `--antrop-*` strategy-banner colours,
+  added the behaviour dot-scale and goal hierarchy to the template, cleaner
+  editorial grid (hero + 3 Cooper columns + quote band on the front; drop-cap
+  narrative + 3-quote sidebar on the back), and a more legible offline font
+  fallback. **`canvas-design` is now an optional enhancement, OFF by default
+  (`use-canvas-design: no`)** — the bundled template + `render-pdf.py` produce
+  the complete, print-ready deliverable on their own, so users no longer need a
+  separate skill installed for a polished result.
+- **`render-pdf.py` finds installed browsers.** The Chromium probe now also
+  checks macOS app bundles (`/Applications/Google Chrome.app`, Chromium, Edge,
+  Brave) and common Windows paths — so the default render works on a normal Mac
+  where Chrome isn't on `PATH`, instead of falling through to absent engines.
+
+## [0.10.0-rc1] — 2026-05
 
 - **Autonomous mode (`process.mode: auto`)** — a deliberate, explicit switch for
   unattended end-to-end runs (scheduled / overnight Cowork jobs). Every

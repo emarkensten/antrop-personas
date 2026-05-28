@@ -24,11 +24,11 @@ These two inputs drive *which* archetype becomes PRIMARY. Without them, the prio
 
 ```
 input-dir: (default: personas-project/<project>/01-interviews/)
-discovery-pattern: **/*.{pdf,docx,md,txt}
+discovery-pattern: **/*.{pdf,docx,doc,md,markdown,txt,text,rtf,vtt,srt,json,html,htm,csv}
 ```
 
-- `input-dir` — absolute or relative path to the folder where raw interview files live. If blank, the default `personas-project/<project>/01-interviews/` is used. Set via `--input-dir` on `start-persona-project` or edit by hand. The skill `clean-interview` auto-discovers files recursively under this path.
-- `discovery-pattern` — glob pattern used during auto-discovery. The default picks up `.pdf`, `.docx`, `.md`, `.txt`. Override only if the project uses non-standard extensions.
+- `input-dir` — absolute or relative path to the folder where raw interview files live. If blank, the default `personas-project/<project>/01-interviews/` is used. Set via `--input-dir` on `start-persona-project` or edit by hand. The skill `clean-interview` auto-discovers files **recursively** under this path, regardless of subfolder naming. See `references/input-ingestion.md` for the full discovery + classification + awkward-structure contract.
+- `discovery-pattern` — glob pattern used during auto-discovery. The default picks up the full supported set (PDF/Word/RTF, plain text/markdown, caption exports `.vtt`/`.srt`, transcript JSON, HTML, CSV). Override only if the project uses non-standard extensions. Files matched here are still **triaged** (interview vs support material) before anything is cleaned.
 
 ---
 
@@ -105,7 +105,7 @@ print-spec: a3-landscape-fogra39
 allow-gemini-image-fallback: yes
 photo-policy: ai-photo
 portrait-style-file: skills/design-archetypes/references/portrait-style.md
-use-canvas-design: yes
+use-canvas-design: no
 double-sided-cards: yes
 render-sub-variants: no
 render-edge-cases: yes
@@ -130,7 +130,7 @@ behavior-scale: yes
   - `none` — empty disc (use sparingly; reads as placeholder)
   **Forbidden under every setting:** geometric stick figures, empty silhouettes, abstract geometric portraits. See `card-renderer.md` "hard rules".
 - `portrait-style-file` — pointer to the locked portrait-style brief (D2). Defaults to `skills/design-archetypes/references/portrait-style.md`. The brief locks colour palette, composition, lighting, stipple density, seed-control across a series.
-- `use-canvas-design` — `yes` (default) routes the final render through the `canvas-design` skill for print-PDF iteration. `no` keeps the inline WeasyPrint render only.
+- `use-canvas-design` — `no` (default since v0.11.0). **The bundled template + `render-pdf.py` already produce a complete, print-ready A3 card on their own** (Chrome/Chromium → Playwright → WeasyPrint fallback ladder), so `canvas-design` is **not required** for a polished, consistent deliverable. Set `yes` only if you happen to have the `canvas-design` skill installed and want an extra 2–3 round automated polish loop on top — it is a pure enhancement, never a dependency.
 - `double-sided-cards` — `yes` (default) produces 2-sided A3 — front (visual) + back (narrative prose). `no` is single-sided front only.
 - `render-sub-variants` — `no` (default) produces one card per archetype. `yes` adds A5 satellite mini-cards per sub-variant with the same colour family.
 - `render-edge-cases` — `yes` (default) produces an "Outliers" card listing edge-zone participants. `no` hides this from the deliverable.

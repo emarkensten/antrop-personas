@@ -62,7 +62,7 @@ This skill is the **orchestrator** — it sits above the eight-step main path. A
 
 Invoke each skill in turn. After each step, re-read `state.json` to confirm `status: completed` (or `skipped`) before advancing. Each skill applies its own defaults and logs its own `AUTO ▸ …` decision line; the orchestrator just sequences them and appends a step-boundary line to `09-auto/auto-decisions.md`.
 
-1. **`clean-interview`** — discover and clean every raw transcript under `input_dir` (recursive). Auto-anonymisation per the configured policy. (If transcripts are already cleaned and the analyst marked the step `skipped`, run the headless `auto-scan` per the E3 contract instead.)
+1. **`clean-interview`** — discover and clean every raw transcript under `input_dir` (recursive, any folder layout, any supported format — see `${CLAUDE_PLUGIN_ROOT}/references/input-ingestion.md`). In auto mode the discovery triage (interview vs support material), the format conversion, and any awkward-structure split (one file → many interviews, etc.) are resolved with the documented heuristics and **logged** to the auto-decision log rather than asked. Auto-anonymisation per the configured policy. (If transcripts are already cleaned and the analyst marked the step `skipped`, run the headless `auto-scan` per the E3 contract instead.)
 2. **`analyse-themes`** — full thematic analysis, configured methodology. Falsification: emergent-vs-prompted, logged.
 3. **`frame-and-cluster`** — build `behavioural-variables.xlsx`, plot, cluster. **B2** applies defaults + logs (no pause).
 4. **`generate-archetypes`** — Cooper archetypes with narrative prose. Run `verify-quotes.py` (must pass — falsification is never skipped). **I1** applies defaults + logs (no pause).

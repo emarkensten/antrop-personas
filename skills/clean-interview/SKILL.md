@@ -58,18 +58,20 @@ It does **not** summarise, collapse, or bullet-point the content. The cleaned do
 At the **Read** beat:
 
 1. Read `state.json.input_dir`. If set, use it as the search root. Otherwise default to `personas-project/<project>/01-interviews/`.
-2. Run `Glob` recursively for `**/*.{pdf,docx,md,txt}` against the root. **Don't** assume any specific subfolder name — projects in the wild use `intervjuer/pdf/`, `Transkriberingar/`, `intervjuer_af/`, `cleaned interviews/`, `transcripts/`, `råmaterial/`, and others. Pick up whatever's there.
-3. Surface the discovered file list with one-line metadata (filename, extension, byte size, modified-at) and ask the analyst:
+2. Run `Glob` recursively for **all supported extensions** against the root:
+   `**/*.{pdf,docx,doc,md,markdown,txt,text,rtf,vtt,srt,json,html,htm,csv}`. **Don't** assume any specific subfolder name — projects in the wild use `intervjuer/pdf/`, `Transkriberingar/`, `intervjuer_af/`, `cleaned interviews/`, `transcripts/`, `råmaterial/`, `Otter exports/`, `Teams recordings/`, and others. Pick up whatever's there. See `${CLAUDE_PLUGIN_ROOT}/references/input-ingestion.md` for the full format + structure contract.
+3. **Triage the hits before showing them.** Auto-discovery is greedy on purpose, so a raw folder usually contains non-interview files too (consent forms, the interview guide, moderator notes, a brief, screenshots-as-PDF, `~$`-locked Office temp files, `.DS_Store`). Apply the classification heuristics in `references/input-ingestion.md` § "Telling interviews from noise" and split the hits into **likely interviews** / **probably not** / **unsure**. Never silently drop a file — surface the split.
+4. Surface the discovered+triaged list with one-line metadata (filename, extension, byte size, modified-at, and your interview/not/unsure guess) and ask the analyst:
 
-   > "I found N interview-like files under `<input_dir>`. Are these the interviews you want to clean?"
+   > "I found N files under `<input_dir>`. I think M are interviews (listed), K are probably support material (consent forms, guide, notes), and J I'm unsure about. Clean the M? Adjust the selection?"
 
-4. If the analyst says "yes but only some", let them narrow by glob pattern or by hand-picking. If they say "wrong folder", let them point at a different one — update `state.json.input_dir` accordingly.
+5. If the analyst says "yes but only some", let them narrow by glob pattern or by hand-picking. If they say "wrong folder", let them point at a different one — update `state.json.input_dir` accordingly. Handle the awkward structures (one file containing all interviews, one participant split across several files, mixed already-cleaned + raw) per `references/input-ingestion.md` § "Awkward structures".
 
 ## Working format and format-agnostic input (A2)
 
 **All working files in this pipeline are `.md`** — cheap to read, cheap to write, diff-friendly, easy for the next skill to ingest. Word and PDF only exist at the edges:
 
-- Raw input can be `.pdf`, `.docx`, `.txt`, or `.md` — this skill detects the extension and converts as needed
+- Raw input can be `.pdf`, `.docx`, `.doc`, `.rtf`, `.txt`, `.md`, `.vtt`/`.srt` (caption/auto-transcript exports), `.json` (Otter/Whisper/Teams transcript exports), `.html`, or `.csv` — this skill detects the format and converts as needed. See `${CLAUDE_PLUGIN_ROOT}/references/input-ingestion.md` for the full per-format contract.
 - The cleaned working file is **always** `.md` under `personas-project/<project>/01-interviews/`
 - A `.docx` mirror of the cleaned file is produced **only** if the user explicitly asks for one to share outside the project
 
@@ -97,6 +99,89 @@ for p in doc.paragraphs:
     print(p.text)
 " > "01-interviews/<id>-raw.md"
     ;;
+  *.doc)
+    # Legacy binary Word. No pure-Python reader; use a converter if present.
+    if command -v textutil >/dev/null; then           # macOS
+      textutil -convert txt -stdout "$INPUT_FILE" > "01-interviews/<id>-raw.md"
+    elif command -v antiword >/dev/null; then          # Linux
+      antiword "$INPUT_FILE" > "01-interviews/<id>-raw.md"
+    elif command -v libreoffice >/dev/null; then
+      libreoffice --headless --convert-to txt:Text --outdir /tmp "$INPUT_FILE" && cat /tmp/"$(basename "${INPUT_FILE%.doc}").txt" > "01-interviews/<id>-raw.md"
+    else
+      echo "Cannot read legacy .doc — ask the analyst to re-save as .docx, or install textutil/antiword/libreoffice" >&2; exit 1
+    fi
+    ;;
+  *.rtf)
+    python3 -c "
+try:
+    from striprtf.striprtf import rtf_to_text
+    print(rtf_to_text(open('$INPUT_FILE', encoding='utf-8', errors='ignore').read()))
+except ImportError:
+    import re, sys
+    t = open('$INPUT_FILE', encoding='utf-8', errors='ignore').read()
+    t = re.sub(r'\\\\[a-z]+-?[0-9]* ?', '', t)   # strip control words
+    t = re.sub(r'[{}]', '', t)
+    print(t)
+" > "01-interviews/<id>-raw.md"
+    ;;
+  *.vtt|*.srt)
+    # Caption / auto-transcript export. Drop cue numbers, timestamps, WEBVTT header,
+    # and collapse repeated speaker tags. Keep the spoken text in order.
+    python3 -c "
+import re, sys
+lines = open('$INPUT_FILE', encoding='utf-8', errors='ignore').read().splitlines()
+out = []
+for ln in lines:
+    s = ln.strip()
+    if not s or s == 'WEBVTT' or s.isdigit(): continue
+    if '-->' in s: continue                       # timestamp cue
+    s = re.sub(r'<[^>]+>', '', s)                 # inline <v Speaker> tags
+    out.append(s)
+print('\n'.join(out))
+" > "01-interviews/<id>-raw.md"
+    ;;
+  *.json)
+    # Otter / Whisper / Teams / Zoom transcript JSON. Try the common shapes:
+    # top-level 'segments'/'monologues'/'results', each with 'text'/'speaker'.
+    python3 -c "
+import json, sys
+d = json.load(open('$INPUT_FILE', encoding='utf-8'))
+def emit(seg):
+    spk = seg.get('speaker') or seg.get('speaker_name') or seg.get('speaker_label')
+    txt = seg.get('text') or seg.get('transcript') or seg.get('content') or ''
+    print((f'{spk}: ' if spk else '') + txt.strip())
+segs = d.get('segments') or d.get('monologues') or d.get('results') or (d if isinstance(d, list) else [])
+if segs:
+    for s in segs: emit(s)
+else:
+    print(json.dumps(d, ensure_ascii=False, indent=2))   # unknown shape — dump for manual triage
+" > "01-interviews/<id>-raw.md"
+    ;;
+  *.html|*.htm)
+    python3 -c "
+import re, sys
+t = open('$INPUT_FILE', encoding='utf-8', errors='ignore').read()
+t = re.sub(r'(?is)<(script|style).*?</\1>', '', t)
+t = re.sub(r'(?i)</(p|div|br|li|h[1-6]|tr)>', '\n', t)
+t = re.sub(r'<[^>]+>', '', t)
+import html; print(html.unescape(t))
+" > "01-interviews/<id>-raw.md"
+    ;;
+  *.csv)
+    # Some tools export transcripts as speaker,timestamp,text rows. Join the text column.
+    python3 -c "
+import csv, sys
+rows = list(csv.reader(open('$INPUT_FILE', encoding='utf-8', errors='ignore')))
+# Heuristic: find the column whose cells are longest on average = the text column.
+if rows:
+    ncol = max(len(r) for r in rows)
+    body = rows[1:] if any(not c.replace('.','').isdigit() for c in rows[0]) else rows
+    avg = [sum(len(r[i]) for r in body if i < len(r))/max(1,len(body)) for i in range(ncol)]
+    ti = avg.index(max(avg))
+    for r in body:
+        if ti < len(r) and r[ti].strip(): print(r[ti].strip())
+" > "01-interviews/<id>-raw.md"
+    ;;
   *.pdf)
     # Preferred: pypdf (text-layer extraction). pdfplumber is a fallback for messy PDFs.
     python3 -c "
@@ -111,15 +196,16 @@ for page in r.pages:
     # and ask the analyst whether to run OCR (ocrmypdf, tesseract) before continuing.
     ;;
   *)
-    echo "Unknown extension; refusing to convert silently" >&2
+    echo "Unrecognised format. Supported: pdf, docx, doc, rtf, txt, md, vtt, srt, json, html, csv." >&2
+    echo "You can also paste the transcript directly into chat and I'll ingest it." >&2
     exit 1
     ;;
 esac
 ```
 
-Keep speaker labels, timestamps, and paragraph breaks. **Do not** convert via `mammoth → html → md` chains — they introduce noise. Save the converted raw next to the cleaned file so the user can compare if needed.
+These snippets are illustrative — the point is the **dispatch contract**, not the exact code. After any conversion, **sanity-check the output is non-empty and looks like dialogue** (has speaker turns or sentence structure). An empty or garbage result means the wrong extractor (scanned PDF, unusual JSON shape, binary `.doc` with no converter) — surface that to the analyst rather than feeding empty text downstream. Keep speaker labels, timestamps, and paragraph breaks. **Do not** convert via `mammoth → html → md` chains — they introduce noise. Save the converted raw next to the cleaned file so the user can compare if needed.
 
-**Dependencies.** `python-docx` (already required) and `pypdf` (new — list in `DEPENDENCIES.md`). If `pypdf` is missing on the host, ask the analyst whether to `pip install pypdf` or fall back to manual conversion.
+**Dependencies.** `python-docx` and `pypdf` (required). Soft/optional, only for the formats that need them: `striprtf` (`.rtf` — there's a regex fallback if absent), and a system `.doc` converter (`textutil` on macOS / `antiword` / `libreoffice`). `.vtt`/`.srt`/`.json`/`.html`/`.csv`/`.txt`/`.md` need no extra library. If a needed converter is missing, ask the analyst to install it or to re-save / paste the transcript — never convert silently to empty. See `${CLAUDE_PLUGIN_ROOT}/references/input-ingestion.md` and `DEPENDENCIES.md`.
 
 ## The five-beat checkpoint flow
 

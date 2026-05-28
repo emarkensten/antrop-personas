@@ -176,16 +176,18 @@ If `hide-audit-markers: no` (default):
 
 Also render a second pass `Persona Cards v1 — clean.pdf` with `hide-audit-markers: yes` for the client-facing version, if the analyst asked for both versions at the briefing.
 
-#### 4.6 · Canvas-design routing (D1)
+#### 4.6 · Canvas-design routing (D1 — optional enhancement, OFF by default)
 
-If `use-canvas-design: yes` (default):
+**The bundled template + `references/render-pdf.py` already produce a complete, print-ready, consistent A3 double-sided card** (all elements: photo, name, role tagline, behaviour dot-scales, drivkrafter + goal hierarchy, smärtor, behov, theme chips, pull-quote on the front; narrative + quote sidebar on the back). `canvas-design` is **not required** and is OFF by default (`use-canvas-design: no`). Do not block or degrade the deliverable when it is absent.
 
-- After the initial render, invoke the `canvas-design` skill with the produced HTML and PDF
+If `use-canvas-design: yes` AND the `canvas-design` skill is installed (pure opt-in enhancement):
+
+- After the initial render, invoke `canvas-design` with the produced HTML and PDF
 - Iterate 2–3 rounds: render → preview-in-chat → polish (typography, white space, rhythm, edge cases) → re-render
 - Each round, show the analyst the new representative card and ask "iterate more, or OK?"
 - Stop when the analyst says "klar" / "OK"
 
-If `use-canvas-design: no`, the WeasyPrint render is the final output.
+If `use-canvas-design: no` (default) **or** the skill isn't installed, the `render-pdf.py` output is the final deliverable — full stop, no warning needed.
 
 #### 4.7 · Preview iteration loop (D3)
 
