@@ -45,26 +45,49 @@ If a hard dependency is missing, the depending step **must fail clearly** with t
 
 ## gemini-image-gen — current model (M2-image)
 
-Portraits should be generated with the **current best** Gemini image model. As of
-2026-05 (per the `google-genai` SDK docs, verified by a live run):
-
-- **`gemini-3-pro-image`** (Nano Banana Pro — Gemini 3 Pro Image) — highest
-  fidelity, "Thinking", supports `image_size` 1K/2K/4K + aspect-ratio control.
-  **Preferred for client-facing persona portraits** (quality over cost). The
-  `gemini-3-pro-image-preview` alias also works. Generate at `image_size: "2K"`,
-  `aspect_ratio: "4:5"` (matches `portrait-style.md` and the portrait disc).
-- `gemini-2.5-flash-image` (Nano Banana) — cheaper/faster fallback for high volume.
-
-There is **no `gemini-3.5-flash` image model** — that name does not exist; don't
-pin it. Google rotates these, so re-check the live `google-genai` docs / model
-list before a run rather than trusting any pinned string. A minimal known-good
-call (used to generate the SJ Återförsäljare portraits):
+Use the **current best** image model — don't trust a pinned string, since Google
+rotates these. **Always query the live model list first** and pick the newest
+image-capable one:
 
 ```python
 from google import genai
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+for m in client.models.list():
+    if "image" in m.name:
+        print(m.name)   # e.g. gemini-3.1-flash-image, gemini-3-pro-image, gemini-2.5-flash-image, imagen-4.0-*
+```
+
+The Gemini-native image capability is **"Nano Banana"**. Two current Gemini 3.1
+image models matter for personas (verified against this account's live list,
+2026-05-29):
+
+- **`gemini-3-pro-image` — Nano Banana Pro (Gemini 3.1 Pro Image).** Professional
+  asset production, "Thinking"/advanced reasoning, `image_size` 1K/2K/4K.
+  **Recommended default for client persona portraits** — this pipeline prioritises
+  quality over cost. Generate at `image_size: "2K"`, `aspect_ratio: "4:5"`.
+- `gemini-3.1-flash-image` — **Nano Banana 2 (Gemini 3.1 Flash Image).** The
+  high-efficiency counterpart: speed / high-volume. Use for `--dry-run`, large
+  batches, or when cost matters more than fidelity.
+- `gemini-2.5-flash-image` (older Nano Banana) — last-resort fallback only.
+- `imagen-4.0-generate-001` / `-ultra` — Imagen 4 (`predict` API). Sharp but tends
+  glossier / "studio stock" and looks into the lens — weaker fit for the editorial
+  brief; not recommended for this series.
+- **Not an image model:** `gemini-3.5-flash` is text-only — it cannot generate images.
+
+**Pick the model from the live list, never a hard-coded guess** — Google rotates
+these:
+
+```python
+from google import genai
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+print([m.name for m in client.models.list() if "image" in m.name])
+```
+
+Known-good portrait call (Nano Banana Pro, `aspect_ratio` matches `portrait-style.md`):
+
+```python
 from google.genai import types
 from io import BytesIO; from PIL import Image
-client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 resp = client.models.generate_content(
     model="gemini-3-pro-image",
     contents=open("prompt-<name>.txt").read(),
@@ -75,7 +98,8 @@ for part in resp.parts:
         Image.open(BytesIO(part.inline_data.data)).convert("RGB").save("<name>.jpg", quality=92)
 ```
 
-If the `gemini-image-gen` skill pins an older model, update it to `gemini-3-pro-image`.
+If the `gemini-image-gen` skill pins an older model, update it to **`gemini-3-pro-image`**
+(Nano Banana Pro) for portraits.
 
 ## gemini-image-gen ESM-resolution note (J2)
 

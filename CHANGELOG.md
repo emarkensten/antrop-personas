@@ -6,7 +6,18 @@ The early release-candidate history (rc5–rc7) was not documented in detail at 
 time; the entries below reconstruct it honestly from the manifest, the validation
 report, and the source. Only the headline changes are recorded for those.
 
-## [0.11.3-rc1] — 2026-05 (current)
+## [0.11.4-rc1] — 2026-05 (current)
+
+- **Corrected portrait-model guidance** in `DEPENDENCIES.md` after checking the
+  live model list (2026-05-29) and the Nano Banana naming. Both relevant models
+  are Gemini 3.1: **Nano Banana Pro = `gemini-3-pro-image`** (professional,
+  "Thinking" — the **quality default for portraits**) and Nano Banana 2 =
+  `gemini-3.1-flash-image` (high-efficiency, for volume/`--dry-run`). Added an
+  instruction to **read the model from the live `client.models.list()`** rather
+  than pinning a string, noted Imagen 4 is a weaker fit for the editorial brief,
+  and that `gemini-3.5-flash` is text-only (not an image model).
+
+## [0.11.3-rc1] — 2026-05
 
 - **Fixed an install blocker.** `marketplace.json` `plugins[].source` was an object
   (`{source:"local",path:"."}`) which the current `claude plugin validate` rejects
