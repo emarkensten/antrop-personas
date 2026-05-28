@@ -106,7 +106,7 @@ for p in doc.paragraphs:
     elif command -v antiword >/dev/null; then          # Linux
       antiword "$INPUT_FILE" > "01-interviews/<id>-raw.md"
     elif command -v libreoffice >/dev/null; then
-      libreoffice --headless --convert-to txt:Text --outdir /tmp "$INPUT_FILE" && cat /tmp/"$(basename "${INPUT_FILE%.doc}").txt" > "01-interviews/<id>-raw.md"
+      base="$(basename "$INPUT_FILE")"; base="${base%.*}"; libreoffice --headless --convert-to txt:Text --outdir /tmp "$INPUT_FILE" && cat "/tmp/$base.txt" > "01-interviews/<id>-raw.md"
     else
       echo "Cannot read legacy .doc — ask the analyst to re-save as .docx, or install textutil/antiword/libreoffice" >&2; exit 1
     fi

@@ -28,15 +28,22 @@ import sys
 from pathlib import Path
 from typing import Iterable
 
-# Quote pattern: attributed quote followed by interview-id on next line / same paragraph.
-# Matches markdown blockquotes ('> "..." — IP02') and inline ('"..." — IP02').
+# Quote pattern: attributed quote followed by an interview-id.
+# Matches markdown blockquotes ('> "..." — IP02') and inline ('"..." — INTERVJU 02 · RAD 142').
+# Recognises Swedish AND English attribution words (INTERVJU / INTERVIEW / IP / RESPONDENT / R)
+# — the plugin's default language is Swedish, so "INTERVJU"/"Intervju" MUST match or the whole
+# verification silently passes. Ids handled: IP02, 02, 02A, 1808-29, 1805-7. A trailing
+# "· RAD nnn" / page/line suffix is ignored (it falls outside the id capture group).
 QUOTE_PATTERN = re.compile(
-    r'["“]([^"“”]{8,})["”]\s*[—–-]\s*(?:INTERVIEW\s*|IP)?\s*(?P<id>\d{1,3}[A-Z]?|[A-Z]+\d+)',
+    r'["“]([^"“”]{8,})["”]\s*[—–-]\s*'
+    r'(?:INTERVJU|INTERVIEW|RESPONDENT|IP|R)?\s*'
+    r'(?P<id>[A-Za-z]{0,3}\d{1,4}(?:-\d{1,4})?[A-Za-z]?)',
     re.IGNORECASE,
 )
 
-# Loose-match threshold: how many consecutive normalised characters must match.
-LOOSE_MATCH_MIN_RUN = 20
+# Minor-paraphrase threshold: how many consecutive words of the quote must appear
+# verbatim in the transcript for the verdict to be MINOR_PARAPHRASE rather than FABRICATED.
+MINOR_PARAPHRASE_MIN_WORDS = 5
 
 
 def normalise(s: str) -> str:
@@ -73,7 +80,7 @@ def find_quote_verdict(quote: str, transcript: str) -> str:
                 break
         if longest > 0:
             break
-    if longest >= LOOSE_MATCH_MIN_RUN // 4:
+    if longest >= MINOR_PARAPHRASE_MIN_WORDS:
         return "MINOR_PARAPHRASE"
 
     return "FABRICATED"
@@ -87,20 +94,29 @@ def extract_quotes(text: str) -> Iterable[tuple[str, str, int]]:
 
 
 def find_interview_file(interviews_dir: Path, ip_id: str) -> Path | None:
-    # Try several naming conventions: IP02-cleaned.md, IP2-cleaned.md, 02-cleaned.md
-    numeric = re.sub(r"[^0-9]", "", ip_id) or ip_id
+    # Handle ids like IP02, 02, 1808-29, 1805-7. Keep the hyphenated form (real AMF/SJ
+    # naming) AND a digits-only form, and try both as filenames and as glob tokens.
+    raw = ip_id.strip()
+    hyphen = re.sub(r"[^0-9-]", "", raw).strip("-") or raw   # "1808-29"
+    digits = re.sub(r"[^0-9]", "", raw) or raw               # "180829"
     candidates = [
-        interviews_dir / f"IP{numeric}-cleaned.md",
-        interviews_dir / f"IP{numeric.zfill(2)}-cleaned.md",
-        interviews_dir / f"{ip_id}-cleaned.md",
-        interviews_dir / f"interview-{numeric}-cleaned.md",
+        interviews_dir / f"IP{raw}-cleaned.md",
+        interviews_dir / f"{raw}-cleaned.md",
+        interviews_dir / f"IP{hyphen}-cleaned.md",
+        interviews_dir / f"IP{digits}-cleaned.md",
+        interviews_dir / f"IP{digits.zfill(2)}-cleaned.md",
+        interviews_dir / f"{hyphen}-cleaned.md",
+        interviews_dir / f"interview-{digits}-cleaned.md",
     ]
     for c in candidates:
         if c.exists():
             return c
-    # Fall back to glob
-    for p in interviews_dir.glob(f"*{numeric}*cleaned*.md"):
-        return p
+    # Fall back to glob — prefer the hyphen-preserving token (won't over-concatenate
+    # "1808-29" into "180829"), then the digits-only form.
+    for token in (raw, hyphen, digits):
+        for p in interviews_dir.glob(f"*{token}*"):
+            if p.suffix == ".md" and "clean" in p.name.lower():
+                return p
     return None
 
 

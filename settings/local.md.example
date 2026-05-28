@@ -62,7 +62,7 @@ allow-mixed-quotes: yes
 
 ```
 policy: stockholm-carve-out
-city-keep-list: Stockholm, Hornsgatan, Södermalm, Sofo, Sofo, Mariatorget, Liljeholmen
+city-keep-list: Stockholm, Hornsgatan, Södermalm, Sofo, Mariatorget, Liljeholmen
 city-redact-everywhere-else: yes
 indirect-identifier-strictness: high
 age-bracket-rule: explicit-statement-only

@@ -77,7 +77,7 @@ Before composing archetypes, the skill needs the project's *effect goals* and *b
 
 1. Look for `personas-project/<project>/effektmål.md` (or `effect-goals.md`). If present, read it.
 2. Look for `personas-project/<project>/project-brief.md`. If present, read it.
-3. Look in `.persona-config.md` for `project.effect-goals` and `project.brief-path` fields.
+3. Look in `.persona-config.md` for `project.effect-goals-path` and `project.brief-path` fields (the keys defined in `${CLAUDE_PLUGIN_ROOT}/settings/local.md.example`).
 
 If neither file nor config field is present, **HALT and ask the analyst** before continuing:
 

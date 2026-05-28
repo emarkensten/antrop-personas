@@ -6,7 +6,28 @@ The early release-candidate history (rc5–rc7) was not documented in detail at 
 time; the entries below reconstruct it honestly from the manifest, the validation
 report, and the source. Only the headline changes are recorded for those.
 
-## [0.11.0-rc1] — 2026-05 (current)
+## [0.11.1-rc1] — 2026-05 (current)
+
+Bug-fix pass after an independent review.
+
+- **CRITICAL — `verify-quotes.py` no longer silently passes Swedish quotes.** The
+  attribution regex only recognised `INTERVIEW`/`IP`, so quotes attributed the
+  Swedish way (`— INTERVJU 02 · RAD 142`, `— Intervju 04`) matched nothing and
+  the verifier reported "all VERIFIED / exit 0" without auditing a single quote —
+  disabling the plugin's named safety net against fabricated quotes for its
+  default language. Added `INTERVJU`/`RESPONDENT`/`R`, made the id grammar handle
+  hyphenated ids (`1808-29`, `1805-7`) and trailing `· RAD nnn` suffixes, and made
+  `find_interview_file` resolve hyphenated ids instead of over-concatenating them.
+- Renamed the misleading `LOOSE_MATCH_MIN_RUN` constant (commented as "characters"
+  but used as a word count) to `MINOR_PARAPHRASE_MIN_WORDS = 5`, used directly.
+- Fixed a config-key mismatch: `generate-archetypes` now reads
+  `project.effect-goals-path` (the key `settings/local.md.example` actually
+  defines), not `project.effect-goals`.
+- Minor: de-duplicated `Sofo` in the default city-keep-list; reworded the README
+  skill-count prose ("eight steps + two side-branches" rather than "ten steps");
+  made the `.doc`→txt LibreOffice branch strip the suffix case-insensitively.
+
+## [0.11.0-rc1] — 2026-05
 
 - **Robust input ingestion.** Discovery and conversion now accept whatever the
   analyst already has, in whatever folder layout: added `.doc`, `.rtf`,
