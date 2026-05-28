@@ -2,24 +2,10 @@
 name: generate-archetypes
 description: "Turn locked clusters into Cooper-style behavioural archetypes — bullets AND a narrative (≥200 words) per archetype. Reads behavioural-variables.xlsx from frame-and-cluster. Enforces a non-skippable analyst checkpoint after Produce."
 metadata:
-  version: 1.1.0
-  pipeline-step: 4
+  version: "1.1.0"
+  pipeline-step: "4"
   works-on: persona-research
-  triggers:
-    - "generera arketyper"
-    - "skapa personas"
-    - "bygg arketyper"
-    - "Cooper-personas"
-    - "ta fram personas"
-    - "generate archetypes"
-    - "build personas from clusters"
-    - "compose archetypes from clusters"
-    - "bygg ihop personerna"
-    - "skriv ihop arketyperna"
-    - "gör om klustren till personas"
-    - "draft the personas now"
-    - "write up the archetypes"
-    - "create user personas"
+  triggers: "generera arketyper, skapa personas, bygg arketyper, Cooper-personas, ta fram personas, generate archetypes, build personas from clusters, compose archetypes from clusters, bygg ihop personerna, skriv ihop arketyperna, gör om klustren till personas, draft the personas now, write up the archetypes, create user personas"
 ---
 
 # Generate archetypes

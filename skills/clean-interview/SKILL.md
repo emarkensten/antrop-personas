@@ -2,24 +2,10 @@
 name: clean-interview
 description: "Clean, anonymise, and convert a raw interview transcript into analysis-ready markdown. Handles .pdf / .docx / .md / .txt input transparently. Use when the analyst wants to prepare transcripts for thematic analysis or upload raw interview files."
 metadata:
-  version: 1.1.0
-  pipeline-step: 1
+  version: "1.1.0"
+  pipeline-step: "1"
   works-on: persona-research
-  triggers:
-    - "städa intervju"
-    - "anonymisera transkript"
-    - "rensa intervju"
-    - "rensa transkript inför analys"
-    - "rensa utskriften"
-    - "clean interview"
-    - "prepare transcript"
-    - "GDPR-anonymisering"
-    - "gör intervjun klar för analys"
-    - "kan du fixa den här intervjun"
-    - "make this transcript safe to analyse"
-    - "depersonalise this"
-    - "förbered intervju för analys"
-    - "remove names from transcript"
+  triggers: "städa intervju, anonymisera transkript, rensa intervju, rensa transkript inför analys, rensa utskriften, clean interview, prepare transcript, GDPR-anonymisering, gör intervjun klar för analys, kan du fixa den här intervjun, make this transcript safe to analyse, depersonalise this, förbered intervju för analys, remove names from transcript"
 ---
 
 # Clean interview

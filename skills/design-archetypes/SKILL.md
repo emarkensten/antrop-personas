@@ -2,26 +2,10 @@
 name: design-archetypes
 description: "Turn validated archetypes into Antrop-branded persona cards — double-sided A3 (front = visual summary, back = narrative prose), AI-generated photo portraits with locked series style, design-handoff folder for designers / claude/design. Outputs PDF + HTML + raw-material handoff."
 metadata:
-  version: 1.1.0
-  pipeline-step: 6
+  version: "1.1.0"
+  pipeline-step: "6"
   works-on: persona-research
-  triggers:
-    - "designa personas"
-    - "snygga personas"
-    - "Antrop persona-kort"
-    - "persona PDF"
-    - "persona cards"
-    - "make the archetypes look good"
-    - "design the archetypes in our brand"
-    - "persona one-pager"
-    - "A3 personas"
-    - "gör dem snygga"
-    - "gör om dem till kort"
-    - "snygg PDF av personas"
-    - "make this presentable"
-    - "produce the persona cards"
-    - "rendera personas i brand"
-    - "export personas to PDF"
+  triggers: "designa personas, snygga personas, Antrop persona-kort, persona PDF, persona cards, make the archetypes look good, design the archetypes in our brand, persona one-pager, A3 personas, gör dem snygga, gör om dem till kort, snygg PDF av personas, make this presentable, produce the persona cards, rendera personas i brand, export personas to PDF"
 ---
 
 # Design archetypes

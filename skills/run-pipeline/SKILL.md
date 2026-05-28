@@ -2,26 +2,10 @@
 name: run-pipeline
 description: "Run the whole persona pipeline end-to-end, unattended, with documented defaults — clean → analyse → frame-and-cluster → generate → validate → design (incl. gemini AI portraits) → polish → package (incl. print-PDF). For scheduled / overnight Cowork runs where the analyst wants finished, full-quality personas waiting in the morning. Sets mode:auto, applies and logs every default decision, never reduces quality, and writes a MORNING-REVIEW summary. Distinct from dry-run (preview) and skip-checkpoints (synthetic)."
 metadata:
-  version: 1.0.0
-  pipeline-step: orchestrator
+  version: "1.0.0"
+  pipeline-step: "orchestrator"
   works-on: persona-research
-  triggers:
-    - "kör hela personaflödet"
-    - "kör hela pipelinen"
-    - "automatkör personas"
-    - "kör allt automatiskt"
-    - "gör personas medan jag sover"
-    - "gör klart personas tills imorgon"
-    - "kör personas i autopilot"
-    - "kör pipelinen med defaultval"
-    - "schemalägg personakörning"
-    - "run the whole persona pipeline"
-    - "run the full pipeline end to end"
-    - "autonomous persona run"
-    - "run personas unattended"
-    - "run the pipeline with defaults"
-    - "make the personas overnight"
-    - "autopilot personas"
+  triggers: "kör hela personaflödet, kör hela pipelinen, automatkör personas, kör allt automatiskt, gör personas medan jag sover, gör klart personas tills imorgon, kör personas i autopilot, kör pipelinen med defaultval, schemalägg personakörning, run the whole persona pipeline, run the full pipeline end to end, autonomous persona run, run personas unattended, run the pipeline with defaults, make the personas overnight, autopilot personas"
 ---
 
 # Run pipeline (autonomous orchestrator)

@@ -2,26 +2,10 @@
 name: package-for-client
 description: "Collate the full persona-research project into a single client deliverable. Produces a Cover document + ordered zip bundle including themes, framework, archetypes, validity audit, persona cards, and design-handoff folder."
 metadata:
-  version: 1.2.0
-  pipeline-step: 8
+  version: "1.2.0"
+  pipeline-step: "8"
   works-on: persona-research
-  triggers:
-    - "paketera leverans"
-    - "skapa slutleverans"
-    - "samla allt till kund"
-    - "client bundle"
-    - "package the deliverable"
-    - "ihop till slutleverans"
-    - "skicka till kund"
-    - "leveransbundle"
-    - "ihopsamlat"
-    - "allt på ett ställe"
-    - "samla artefakterna"
-    - "build the final handover"
-    - "wrap this up for the client"
-    - "make a bundle to send out"
-    - "färdigställ projektet"
-    - "deliver to the client"
+  triggers: "paketera leverans, skapa slutleverans, samla allt till kund, client bundle, package the deliverable, ihop till slutleverans, skicka till kund, leveransbundle, ihopsamlat, allt på ett ställe, samla artefakterna, build the final handover, wrap this up for the client, make a bundle to send out, färdigställ projektet, deliver to the client"
 ---
 
 # Package for client

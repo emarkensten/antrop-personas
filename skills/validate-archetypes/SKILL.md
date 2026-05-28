@@ -2,26 +2,10 @@
 name: validate-archetypes
 description: "Run a seven-check validity audit on archetypes against the underlying interviews — traceability, coverage, distinctiveness, negative cases, triangulation, saturation. Outputs audit-findings.md + polished docx + HTML traceability heatmap. Supports --depth=fast for time-pressured passes."
 metadata:
-  version: 1.1.0
-  pipeline-step: 5
+  version: "1.1.0"
+  pipeline-step: "5"
   works-on: persona-research
-  triggers:
-    - "validera arketyper"
-    - "granska personas"
-    - "kvalitetssäkra arketyper"
-    - "audit personas"
-    - "spårbarhet personas"
-    - "stress-testa arketyper"
-    - "validate the archetypes"
-    - "are these archetypes well-grounded"
-    - "är personas trovärdiga"
-    - "håller personas"
-    - "håller arketyperna"
-    - "är de här arketyperna verkligen förankrade"
-    - "kan jag lita på dessa personas"
-    - "do these personas actually hold up"
-    - "fact-check the personas"
-    - "är personas grundade"
+  triggers: "validera arketyper, granska personas, kvalitetssäkra arketyper, audit personas, spårbarhet personas, stress-testa arketyper, validate the archetypes, are these archetypes well-grounded, är personas trovärdiga, håller personas, håller arketyperna, är de här arketyperna verkligen förankrade, kan jag lita på dessa personas, do these personas actually hold up, fact-check the personas, är personas grundade"
 ---
 
 # Validate archetypes

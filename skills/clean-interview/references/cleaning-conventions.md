@@ -12,7 +12,7 @@ The cleaned transcript should be markdown, easy to grep, easy for downstream ski
 - **Length**: ~MM minutes
 - **Age bracket**: 25–34 *(only if stated)*
 - **Household**: single / couple / family-with-children / shared housing *(only if stated)*
-- **Cleaned by**: Claude (antrop-personas plugin v0.11.5-rc1)
+- **Cleaned by**: Claude (antrop-personas plugin v0.11.5-rc2)
 - **Anonymisation policy**: default · v1
 - **Summary of changes**: see `IP<NN>-cleaning-summary.md`
 ```

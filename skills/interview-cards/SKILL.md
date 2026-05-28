@@ -2,23 +2,11 @@
 name: interview-cards
 description: "Produce A3 landscape workshop cards summarising each individual interview participant. One card per actual participant, with AI-photo portrait (D1b policy applies — never stick figures). Distinct from design-archetypes which produces composites."
 metadata:
-  version: 1.1.0
-  pipeline-step: 1b
+  version: "1.1.0"
+  pipeline-step: "1b"
   works-on: persona-research
-  side-branch: true
-  triggers:
-    - "gör intervjukort"
-    - "skapa kort per intervju"
-    - "intervjukort till workshop"
-    - "intervju-kort"
-    - "deltagarkort"
-    - "wall cards"
-    - "participant cards"
-    - "make a card for each interview"
-    - "ge mig ett kort per deltagare"
-    - "kort till workshopväggen"
-    - "kort att klistra upp"
-    - "summary card per participant"
+  side-branch: "true"
+  triggers: "gör intervjukort, skapa kort per intervju, intervjukort till workshop, intervju-kort, deltagarkort, wall cards, participant cards, make a card for each interview, ge mig ett kort per deltagare, kort till workshopväggen, kort att klistra upp, summary card per participant"
 ---
 
 ## Portrait policy (D1b — hard rule)

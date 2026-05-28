@@ -2,25 +2,11 @@
 name: compare-baseline
 description: "Compare the current persona archetypes against a previous deliverable (Mode B baseline). Reads the prior PDF / docx / markdown / zip and the current archetypes.md, identifies 1–2 meaningful differences per pair, and verdict-grades each pair against the source interviews. Use when the analyst wants to validate the new round against a prior round, or to defend either version on the source material."
 metadata:
-  version: 1.0.0
-  pipeline-step: 4b
+  version: "1.0.0"
+  pipeline-step: "4b"
   works-on: persona-research
-  side-branch: true
-  triggers:
-    - "jämför med tidigare personor"
-    - "jämför med tidigare personas"
-    - "validera mot gamla personerna"
-    - "Mode B-jämförelse"
-    - "Mode B comparison"
-    - "compare to previous personas"
-    - "compare with the old personas"
-    - "matcha mot existerande personor"
-    - "ställ mot förra omgången"
-    - "jämför mot baseline"
-    - "compare-baseline"
-    - "baseline comparison"
-    - "hur står sig dessa mot förra"
-    - "is this an improvement over last time"
+  side-branch: "true"
+  triggers: "jämför med tidigare personor, jämför med tidigare personas, validera mot gamla personerna, Mode B-jämförelse, Mode B comparison, compare to previous personas, compare with the old personas, matcha mot existerande personor, ställ mot förra omgången, jämför mot baseline, compare-baseline, baseline comparison, hur står sig dessa mot förra, is this an improvement over last time"
 ---
 
 # Compare baseline

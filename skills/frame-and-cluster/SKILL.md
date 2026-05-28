@@ -2,25 +2,10 @@
 name: frame-and-cluster
 description: "Build a behavioural-variable framework and cluster interviews into emergent groups. Outputs behavioural-variables.xlsx (primary artefact) + cluster plot. Use when the analyst has 4–7 themes and wants Cooper-style design variables and clusters."
 metadata:
-  version: 1.1.0
-  pipeline-step: 3
+  version: "1.1.0"
+  pipeline-step: "3"
   works-on: persona-research
-  triggers:
-    - "bygg ramverk"
-    - "behavioural variables"
-    - "kluster intervjuer"
-    - "Cooper variables"
-    - "skapa kluster"
-    - "frame-and-cluster"
-    - "plotta deltagare"
-    - "build a behavioural variable framework"
-    - "bygg en spelplan av beteenden"
-    - "hur grupperar vi deltagarna"
-    - "plot the participants"
-    - "vad är likheterna och skillnaderna mellan dem"
-    - "vilka beteendedimensioner skiljer dem åt"
-    - "gruppera intervjuerna"
-    - "segment the participants"
+  triggers: "bygg ramverk, behavioural variables, kluster intervjuer, Cooper variables, skapa kluster, frame-and-cluster, plotta deltagare, build a behavioural variable framework, bygg en spelplan av beteenden, hur grupperar vi deltagarna, plot the participants, vad är likheterna och skillnaderna mellan dem, vilka beteendedimensioner skiljer dem åt, gruppera intervjuerna, segment the participants"
 ---
 
 # Frame and cluster

@@ -6,7 +6,7 @@ The early release-candidate history (rc5–rc7) was not documented in detail at 
 time; the entries below reconstruct it honestly from the manifest, the validation
 report, and the source. Only the headline changes are recorded for those.
 
-## [0.11.5-rc1] — 2026-05 (current)
+## [0.11.5-rc2] — 2026-05 (current)
 
 Compatibility pass so the plugin installs under stricter validators (Cowork
 reported "Plugin validation failed" where the local CLI accepted it). Removed

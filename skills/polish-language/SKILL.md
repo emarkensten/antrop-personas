@@ -2,22 +2,10 @@
 name: polish-language
 description: "Run a second-pass language polish over all working files and designed cards after the design step. Catches non-idiomatic Swedish, anglicisms, mixed-language drift, and 'translation-y' phrasings that survive the first opus draft. Sonnet-based — better Swedish prose at the polish stage than opus."
 metadata:
-  version: 1.0.0
-  pipeline-step: 7
+  version: "1.0.0"
+  pipeline-step: "7"
   works-on: persona-research
-  triggers:
-    - "putsa svenskan"
-    - "språkkontroll"
-    - "andra passet svenska"
-    - "kolla språket"
-    - "polera texten"
-    - "polish the language"
-    - "second pass on the language"
-    - "fixa svenskan"
-    - "svenskan känns konstig"
-    - "språkkoll på personas"
-    - "review the language across the deliverables"
-    - "klingar inte naturligt"
+  triggers: "putsa svenskan, språkkontroll, andra passet svenska, kolla språket, polera texten, polish the language, second pass on the language, fixa svenskan, svenskan känns konstig, språkkoll på personas, review the language across the deliverables, klingar inte naturligt"
 ---
 
 # Polish language

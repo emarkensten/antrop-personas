@@ -2,28 +2,10 @@
 name: analyse-themes
 description: "Run an inductive thematic analysis across cleaned interview transcripts. Output: 4–7 themes that cut across multiple interviews and surface a behavioural mechanic, tension, or contradiction — not a topic. Use when ≥3 cleaned transcripts are present."
 metadata:
-  version: 1.1.0
-  pipeline-step: 2
+  version: "1.1.0"
+  pipeline-step: "2"
   works-on: persona-research
-  triggers:
-    - "tematisk analys"
-    - "thematic analysis"
-    - "hitta teman"
-    - "extrahera teman"
-    - "kategorisera intervjuer"
-    - "analysera intervjuer"
-    - "what themes emerge from these interviews"
-    - "kör en tematisk analys på"
-    - "synthesise themes"
-    - "kan du syntetisera vad folk sa"
-    - "kan du köra en analys på intervjuerna"
-    - "vad återkommer i materialet"
-    - "vad säger folk egentligen"
-    - "summarise the patterns across these interviews"
-    - "find the patterns"
-    - "what are people actually saying"
-    - "vilka mönster finns"
-    - "code these interviews"
+  triggers: "tematisk analys, thematic analysis, hitta teman, extrahera teman, kategorisera intervjuer, analysera intervjuer, what themes emerge from these interviews, kör en tematisk analys på, synthesise themes, kan du syntetisera vad folk sa, kan du köra en analys på intervjuerna, vad återkommer i materialet, vad säger folk egentligen, summarise the patterns across these interviews, find the patterns, what are people actually saying, vilka mönster finns, code these interviews"
 ---
 
 # Analyse themes
