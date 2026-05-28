@@ -1,13 +1,13 @@
-# Validation report — antrop-personas v0.11.1-rc1
+# Validation report — antrop-personas v0.11.2-rc1
 
-Date: 2026-05-27 (structural pass); carried forward to v0.11.1-rc1
+Date: 2026-05-27 (structural pass); carried forward to v0.11.2-rc1
 Run by: Cowork session validation pass
 
-> **Note (0.11.1-rc1):** This report was first written at rc2 and has been carried
+> **Note (0.11.2-rc1):** This report was first written at rc2 and has been carried
 > forward. The plugin now ships **10 skills** (added `polish-language`) and
 > **6 agents** (added `language-polisher`). The structural checks below still
 > hold; the end-to-end run was executed on 2026-05-28 (see `HANDOFF_TO_NEW_CHAT.md`).
-> Counts in the table reflect the current 0.11.1-rc1 component set.
+> Counts in the table reflect the current 0.11.2-rc1 component set.
 
 ## Status
 
@@ -74,4 +74,4 @@ Compared to v0.1.0:
 
 ## Recommendation
 
-Ship v0.11.1-rc1 as the testable artefact. Bump to v1.0.0 only after step 1 above completes cleanly (no regressions vs. the NV v1 reference deliverables).
+Ship v0.11.2-rc1 as the testable artefact. Bump to v1.0.0 only after step 1 above completes cleanly (no regressions vs. the NV v1 reference deliverables).

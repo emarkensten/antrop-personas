@@ -115,7 +115,7 @@ body.palette-light .persona-card { border-top: 5mm solid var(--accent, currentCo
 /* ===== FRONT layout =====
  * rows:  topbar / hero(portrait + identity + scales) / cooper(3 cols) / quote
  */
-.persona-card.front { grid-template-rows: auto auto 1fr auto auto; }
+.persona-card.front { grid-template-rows: auto auto 1fr auto; }
 
 .topbar {
   display: flex; justify-content: space-between; align-items: baseline;
@@ -134,7 +134,7 @@ body.palette-light .persona-card { border-top: 5mm solid var(--accent, currentCo
 /* Hero: portrait left, identity + behaviour scales right */
 .hero {
   display: grid;
-  grid-template-columns: 92mm 1fr;
+  grid-template-columns: 82mm 1fr;
   gap: 12mm;
   align-items: start;
 }
@@ -142,11 +142,11 @@ body.palette-light .persona-card { border-top: 5mm solid var(--accent, currentCo
 .persona-age  { font-weight: 300; opacity: 0.55; }
 .role-tagline { font-family: var(--font-serif); font-style: italic; font-size: var(--size-role-tagline); line-height: 1.05; margin: 2mm 0 0; color: var(--accent); }
 .composite    { display: block; margin-top: 4mm; color: var(--light-muted); }
-.sketch       { font-size: var(--size-sketch); line-height: 1.4; margin: 4mm 0 0; max-width: 165mm; }
+.sketch       { font-size: var(--size-sketch); line-height: 1.4; margin: 4mm 0 0; max-width: 250mm; }
 
 /* Portrait disc (AI photo) + initials fallback */
 .portrait-disc, .initials-disc {
-  width: 92mm; height: 92mm; border-radius: 50%; overflow: hidden;
+  width: 82mm; height: 82mm; border-radius: 50%; overflow: hidden;
   box-sizing: border-box;
 }
 .portrait-disc { background: var(--light-surface-2); border: 0.5mm solid var(--accent); }
@@ -157,14 +157,36 @@ body.palette-light .persona-card { border-top: 5mm solid var(--accent, currentCo
   font-family: var(--font-display); font-size: 46pt; font-weight: 800; letter-spacing: -0.03em;
 }
 
-/* Behaviour-variable dot-scale (G10) — lives under the identity block.
- * Compact: label + dots on one row, end-labels as a thin sub-row. */
-.behavior-scale { display: grid; gap: 3mm; margin-top: 6mm; max-width: 165mm; }
-.behavior-scale .scale-row { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 6mm; }
-.behavior-scale .scale-label { font-family: var(--font-mono); font-size: var(--size-label); letter-spacing: var(--letter-spacing-mono); text-transform: uppercase; margin: 0; }
-.behavior-scale .scale-ends  { grid-column: 1 / -1; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 6.5pt; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.5; margin: 0.5mm 0 0; }
-.behavior-scale .scale-dots  { font-size: 13pt; letter-spacing: 0.16em; color: var(--accent); white-space: nowrap; margin: 0; }
-.behavior-scale .scale-dots .on  { color: var(--accent); }
+/* Behaviour-variable dot-scale (G10) — a horizontal band of 3–4 scales under the
+ * identity block. Each scale is a SELF-CONTAINED unit (label directly above the
+ * dots, end-labels aligned to the dot track beneath) so nothing reads as "far
+ * apart". Dots are large and evenly spaced so the differences are legible when
+ * cards hang side by side on a wall. */
+.behavior-scale {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(74mm, 1fr));
+  gap: 11mm;
+  margin-top: 7mm;
+}
+.behavior-scale .scale-row { min-width: 0; }
+.behavior-scale .scale-label {
+  font-family: var(--font-mono); font-size: var(--size-label);
+  letter-spacing: var(--letter-spacing-mono); text-transform: uppercase;
+  margin: 0 0 2.5mm;
+}
+.behavior-scale .scale-track { display: flex; align-items: center; gap: 3mm; }
+.behavior-scale .scale-track span {
+  flex: 1; text-align: center; font-size: 20pt; line-height: 1;
+}
+.behavior-scale .scale-track .on  { color: var(--accent); }
+.behavior-scale .scale-track .off { color: var(--light-rule); }
+.behavior-scale .scale-ends {
+  display: flex; justify-content: space-between; margin: 2mm 0 0;
+  font-family: var(--font-mono); font-size: 6.5pt;
+  letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.55;
+}
+/* Back-compat: a plain dots string still renders (older generated decks). */
+.behavior-scale .scale-dots { font-size: 18pt; letter-spacing: 0.18em; color: var(--accent); margin: 0; }
 .behavior-scale .scale-dots .off { color: var(--light-rule); }
 
 /* Cooper band: three equal columns */
@@ -190,7 +212,7 @@ body.palette-light .persona-card { border-top: 5mm solid var(--accent, currentCo
 .card-meta { display: flex; justify-content: space-between; align-items: center; }
 
 /* Goal hierarchy (P2-fix) — Life / Experience goals as quiet sub-items under drivers */
-.drivers .sub-goals { margin-top: 5mm; padding-top: 4mm; border-top: 0.4pt solid var(--light-rule-soft); }
+.drivers .sub-goals { margin-top: 4mm; padding-top: 3.5mm; border-top: 0.4pt solid var(--light-rule-soft); }
 .drivers .sub-goals .sub-divider,
 .drivers .sub-goals .label { font-family: var(--font-mono); font-size: 7pt; letter-spacing: var(--letter-spacing-mono); text-transform: uppercase; opacity: 0.6; }
 .drivers .sub-goals .sub-divider { display: block; margin-bottom: 2mm; }

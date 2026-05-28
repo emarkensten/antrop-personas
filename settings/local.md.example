@@ -109,7 +109,7 @@ use-canvas-design: no
 double-sided-cards: yes
 render-sub-variants: no
 render-edge-cases: yes
-hide-audit-markers: no
+hide-audit-markers: yes
 emit-design-handoff: yes
 card-front-columns: 3
 palette: light
@@ -134,7 +134,7 @@ behavior-scale: yes
 - `double-sided-cards` — `yes` (default) produces 2-sided A3 — front (visual) + back (narrative prose). `no` is single-sided front only.
 - `render-sub-variants` — `no` (default) produces one card per archetype. `yes` adds A5 satellite mini-cards per sub-variant with the same colour family.
 - `render-edge-cases` — `yes` (default) produces an "Outliers" card listing edge-zone participants. `no` hides this from the deliverable.
-- `hide-audit-markers` — `no` (default) shows THIN / OVER-REACH / UNGROUNDED badges per field per card. `yes` produces a clean client-version with no audit annotations.
+- `hide-audit-markers` — `yes` (default since v0.11.2) keeps the **card design clean** — no THIN / OVER-REACH / UNGROUNDED badges or legend on the printed persona. Audit verdicts belong in `05-validation/audit-findings.md` (the working `.md`/docx version), not on the workshop wall. Set `no` only for an internal QA print where you want the badges overlaid per field.
 - `emit-design-handoff` — `yes` (default) emits the `06-design/design-handoff/` folder (raw material for a designer or claude/design session). `no` skips it.
 - `card-front-columns` — `3` (default, G9-fix) renders three columns on the front (Drivkrafter, Smärtor, Behov), mapping all three Cooper-template sections directly. `2` falls back to the legacy two-column layout (Drivkrafter + Smärtor) and moves Behov to the back card under the narrative. Use `3` for client deliverables; `2` only when character count is tight (workshop posters with long bullets).
 - `palette` — colour-system for the cards (P1-fix). Options:

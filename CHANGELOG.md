@@ -6,7 +6,29 @@ The early release-candidate history (rc5–rc7) was not documented in detail at 
 time; the entries below reconstruct it honestly from the manifest, the validation
 report, and the source. Only the headline changes are recorded for those.
 
-## [0.11.1-rc1] — 2026-05 (current)
+## [0.11.2-rc1] — 2026-05 (current)
+
+Card-design pass after a real-data render review (AMF Sparafasen deck).
+
+- **Behaviour dot-scales redesigned.** Label, dots, and end-labels were spread
+  across the full card width and read as disconnected. Each scale is now a
+  self-contained unit — label directly above 5 large, evenly-spaced dots, with the
+  low/high end-labels aligned directly beneath the dot track — laid out as a tight
+  horizontal band of 3–4 scales. Legible at a glance on a workshop wall. New
+  markup: `.scale-track` with explicit `.on`/`.off` dot spans.
+- **Audit markers off the card by default** (`hide-audit-markers: yes`). THIN /
+  OVER-REACH / UNGROUNDED verdicts belong in `05-validation/audit-findings.md`, not
+  on the printed persona. The badge/legend CSS stays for the opt-in QA case.
+- **Removed the on-card "AI-genererat porträtt" disclaimer.** AI portraits are
+  flagged in the design-handoff README and the cover instead; the card face stays
+  clean. The whole `.card-meta` footer row is gone.
+- **Fixed front overflow.** The densest persona's pull-quote was clipping off the
+  bottom (verified on AMF "Martin", a 9-interview composite). Reclaimed vertical
+  space (smaller portrait, removed meta row, tighter goals block); all four AMF
+  cards — including the negative persona with its strategy banner — now fit one A3
+  page each with the quote band fully visible.
+
+## [0.11.1-rc1] — 2026-05
 
 Bug-fix pass after an independent review.
 

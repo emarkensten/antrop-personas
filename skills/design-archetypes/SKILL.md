@@ -57,7 +57,7 @@ At its **Produce** beat it updates `state.json` for this step (status `completed
 
 - Walks the user through an eight-question pre-design briefing (format, image aesthetic, consistency rules, per-persona character, ethics, language, print specs, usage)
 - Builds **double-sided** A3-landscape persona cards in Antrop's brand:
-  - **Front (page 1)** — visual summary: name, AI photo portrait in tinted disc, tagline, goals + pains columns, theme chips, pull-quote band, optional audit badges
+  - **Front (page 1)** — visual summary: name, AI photo portrait in tinted disc, tagline, composite, sketch, behaviour dot-scale band, the three Cooper columns (drivkrafter+goals / smärtor / behov), theme chips, pull-quote band. Clean — no audit badges or disclaimer text by default.
   - **Back (page 2)** — running narrative prose (≥ 200 words per persona) anchored in the same verbatim citations as the front
 - Renders an HTML version (for iteration, with `@page` print CSS) and a PDF (for client delivery, 2 pages per archetype)
 - Generates **AI-photo portraits by default** (D1b) via `gemini-image-gen` using the locked series brief in `references/portrait-style.md`. Fallback when generation fails: `initials-disc`. **Never** stick figures, geometric placeholders, or empty silhouettes.
@@ -66,7 +66,7 @@ At its **Produce** beat it updates `state.json` for this step (status `completed
 - Emits a `design-handoff/` folder (D4b) with raw material (text per persona, AI portraits, palette, typography spec, brief) so a designer or `claude/design` session can produce alternative formats
 - Optionally renders **sub-variant mini-cards** (D5) at A5 size as satellites to the primary card, when `render-sub-variants: yes`
 - Optionally renders an **Outliers card** (H1) listing edge-zone participants from `frame-and-cluster`, when `render-edge-cases: yes` (default)
-- Reads `05-validation/audit-findings.md` and adds **audit badges** per card (THIN / OVER-REACH / UNGROUNDED on the relevant fields) unless `hide-audit-markers: yes` (E2)
+- By default keeps the card **clean** — audit verdicts (THIN / OVER-REACH / UNGROUNDED) stay in `05-validation/audit-findings.md`, NOT on the printed persona (`hide-audit-markers: yes`, default since v0.11.2). Only overlays per-field audit badges if the analyst explicitly sets `hide-audit-markers: no` (internal QA) (E2)
 
 ## Inputs
 
@@ -89,7 +89,7 @@ Walk the user through, with defaults pre-filled from `references/pre-design-chec
 2. **Image aesthetic** — **`ai-photo` (default — D1b)**. Other options: `stipple` (Antrop illustration library), `illustration` (Antrop hand-drawn), `animal` (project-specific). **`initials-disc` only as fallback when AI generation fails.** Stick figures / geometric placeholders / empty silhouettes are forbidden under every setting. *This is still the most important question* — the analyst must explicitly approve the default or pick another option.
 3. **Consistency rules** — read from `references/portrait-style.md` (D2 — framing / lighting / colour grade locked across the series, single seed)
 4. **Per-persona character** — gender, ethnicity, body type, clothing, one specific detail — explicit per persona, not inferred from the name
-5. **Ethics** — AI-portrait disclaimer in footer (default `yes`); consent check if real participants are depicted
+5. **Ethics** — AI portraits are flagged as AI-generated in the `design-handoff/README.md` and the `package-for-client` cover, **not** as on-card footer text (the card face stays clean — no "AI-genererat porträtt" line). Consent check if real participants are depicted
 6. **Language** — read from `state.json.language` (default Swedish for Antrop)
 7. **Print specs** — read from `.persona-config.md` `brand-overrides.print-spec` (default `a3-landscape-fogra39`)
 8. **Usage** — workshop wall, hand-out, PDF email (controls typography scale)
@@ -99,7 +99,7 @@ Additional decisions surfaced at this step (not part of the eight questions but 
 - `double-sided-cards` — `yes` (default) renders front + back. `no` renders front only.
 - `render-sub-variants` — surface to analyst if any archetype in `archetypes.md` has a non-empty `Sub-variants` block.
 - `render-edge-cases` — surface to analyst if `clusters.md` has edge-zone participants. Default `yes`.
-- `hide-audit-markers` — `no` (default) shows audit badges; `yes` produces a clean client version. Ask the analyst which version they want; if they ask for both, render both.
+- `hide-audit-markers` — `yes` (default since v0.11.2) → clean card, audit verdicts only in `audit-findings.md`. `no` overlays per-field badges (internal QA only). Don't ask by default; only surface the badged variant if the analyst requests it.
 - `emit-design-handoff` — `yes` (default) emits the `06-design/design-handoff/` folder. If the analyst is delivering only the PDF, set to `no`.
 
 ### 3. Checkpoint (D0 · non-skippable analyst pause)

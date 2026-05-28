@@ -92,10 +92,21 @@ Populate the template per archetype:
 - Playfair Display Italic only for role-tagline and pull-quote
 - Martian Mono for label voice (fallback: JetBrains Mono)
 
-**Front (`.persona-card.front`):**
-- Hero with name + role-tagline
-- Composite-from line
-- Portrait disc (AI photo or initials-disc)
+**Front (`.persona-card.front`):** the structure is `topbar` → `.hero` (portrait left; identity right = name + role-tagline + composite + sketch + the behaviour-scale band) → `.cooper` (3 columns) → `.quote-band`. No audit/disclaimer footer.
+- Hero: portrait disc (AI photo or initials-disc) on the left; on the right the name, role-tagline, composite line, a one-paragraph sketch, then the behaviour-scale band (see below).
+- **Behaviour-variable dot-scale** (G10, default on): if `pre_design_answers.behavior-scale` is `yes` (default) AND `03-framework/behavioural-variables.xlsx` exists:
+  - Load the xlsx Sheet 2 (Placements). Compute per-cluster mean for every variable.
+  - Identify the **3–4** variables with the highest between-cluster variance (3 reads cleanest as a single row; 4 wraps to 2+2).
+  - Render `<div class="behavior-scale">` inside the hero identity block, with one `.scale-row` per variable. Each row is a self-contained unit:
+    ```html
+    <div class="scale-row">
+      <p class="scale-label">ENGAGEMANG</p>
+      <div class="scale-track"><span class="on">●</span><span class="on">●</span><span class="off">●</span><span class="off">●</span><span class="off">●</span></div>
+      <div class="scale-ends"><span>Passiv</span><span>Aktiv</span></div>
+    </div>
+    ```
+    Five dots; fill `.on` up to this archetype's cluster-mean position (rounded to nearest of 5), the rest `.off`. `scale-ends` = `<low_end>` / `<high_end>` from Sheet 1. The label sits directly above the dots and the end-labels directly beneath them, so each scale reads as one tight, wall-legible unit — never label-far-left / dots-far-right.
+  - If the xlsx is absent, skip the scale gracefully and note it in the per-card check-list.
 - **Three Cooper columns: Drivkrafter, Smärtor, Behov (G9-fix) — with goal hierarchy (P2-fix).** Map archetypes.md fields:
   - `End goals` → `.drivers` body bullets (label: `DRIVKRAFTER — VAD RÖR <PRONOMEN>` / `DRIVERS — WHAT MOVES <PRONOUN>`). 3–4 End goal bullets at body weight.
   - `Life goals` (1 representative) + `Experience goals` (1 representative) → `.drivers .sub-goals` block under the End goals, separated by a `LIVS- · UPPLEVELSE-` mono divider. Smaller print, italic. These are *context*, not the design lead.
@@ -104,13 +115,9 @@ Populate the template per archetype:
   All three columns render. Never collapse one into another. If a column is short for a given archetype, leave it short rather than dropping it.
   Legacy two-column variant only when `.persona-config.md` `brand-overrides.card-front-columns: 2` — set `<body class="card-front-columns-2">` and the CSS hides `.needs` (which then renders on the back instead).
 - Theme chips (placed under the `.needs` column on the front)
-- **Behavior-variable dot-scale** (G10, default on): if `pre_design_answers.behavior-scale` is `yes` (default) AND `03-framework/behavioural-variables.xlsx` exists:
-  - Load the xlsx Sheet 2 (Placements). Compute per-cluster mean for every variable.
-  - Identify the 3–5 variables with the highest between-cluster variance.
-  - For each, render `<aside class="behavior-scale">` with one `.scale-row` per variable: label (variable name in mono UPPERCASE), dots (`●●●○○` based on this archetype's cluster-mean position, rounded to nearest of 5), and ends (`<low_end> ↔ <high_end>` from Sheet 1 Variables).
-  - Position the aside between the portrait disc and the Cooper columns.
-- Pull-quote band at the bottom
-- For the negative persona: light yellow surface, strategy banner in mono on navy at the bottom, "Design around" pill instead of "Design target"
+- Pull-quote band at the bottom (`.quote-band`, full-bleed)
+- For the negative persona: light yellow surface, `.strategy-banner` in mono on navy at the bottom (in place of the quote band), "Designa runt" pill instead of "Designmål"
+- **No audit badges, no AI-disclaimer footer, no card-meta row** — the front ends at the quote band. Keep it clean (see Step 4b).
 
 **Back (`.persona-card.back`, when `double-sided-cards: yes`):**
 - Same A3 surface, same role class, lighter weight
@@ -121,15 +128,17 @@ Populate the template per archetype:
 
 Verify every quote on every card against `archetypes.md`. **No last-minute paraphrasing for visual fit.** If a quote is too long, pick a different shorter one that exists verbatim — or change the layout.
 
-### Step 4b: Audit-badge overlay (E2)
+### Step 4b: Audit-badge overlay (E2) — OFF by default
 
-If `pre_design_answers.hide-audit-markers` is `no` (default):
+**Default (`hide-audit-markers: yes`, since v0.11.2): emit NO audit nodes.** The card design stays clean — no `audit-badge` spans, no `audit-legend`. Audit verdicts live in `05-validation/audit-findings.md` (and the docx), which is where the analyst and client read them; they do not belong on the printed persona or the workshop wall.
+
+Only if the analyst explicitly sets `hide-audit-markers: no` (rare — an internal QA print):
 
 1. Read `audit_path` (`audit-findings.md`)
 2. For every claim with verdict `THIN` / `OVER-REACH` / `UNGROUNDED`, attach a `<span class="audit-badge thin|over-reach|ungrounded">` next to the relevant field on the front card
 3. Render the `<div class="audit-legend">` block per card
 
-If `hide-audit-markers` is `yes`, skip the badges entirely (no DOM nodes).
+The `audit-badge` / `audit-legend` CSS classes remain defined in the tokens for that opt-in case.
 
 If the analyst asked for BOTH versions at the briefing, render the HTML twice and emit `Persona Cards v1.pdf` (with badges) AND `Persona Cards v1 — clean.pdf` (without).
 
@@ -202,7 +211,7 @@ Before returning:
 - **C3:** confirm every back card carries ≥ 200 words of narrative prose anchored in the same sources as the front
 - **D1b:** confirm every portrait is either AI-generated or `initials-disc`. Scan the HTML for `class="initials-disc"` and report which archetypes fell back so the parent skill knows
 - **D2:** confirm the portrait series uses a single shared seed and matches the locked brief
-- **E2:** confirm audit badges appear on the version intended for the analyst
+- **E2:** confirm the card carries **NO** audit badges or legend by default (`hide-audit-markers: yes`) — audit verdicts stay in `audit-findings.md`. Only render badges if the analyst explicitly set `hide-audit-markers: no`, and never the AI-disclaimer footer text
 - **D4b:** confirm `design-handoff/README.md` exists and the copy-paste prompt is present
 
 If any check fails, fix and re-render before returning.
