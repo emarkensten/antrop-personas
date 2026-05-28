@@ -8,7 +8,8 @@ description: >
   digest set ready and wants to delegate the heavy synthesis work without
   losing the analyst checkpoint upstream.
 model: opus
-tools: Read, Write, Edit, Glob, Grep
+color: cyan
+tools: ["Read", "Write", "Edit", "Glob", "Grep"]
 ---
 
 # thematic-analyser

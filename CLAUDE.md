@@ -38,8 +38,15 @@ helpers only).
     actually drives invocation; `metadata.triggers` is documentation only.)
 - Every step-skill body has a `## Pipeline state` section and the five numbered
   beats: Read → Propose → Checkpoint → Produce → Falsify.
-- Agent frontmatter: `name`, `description`, `model`, `tools`. (No `effort:` field —
-  it is not in the schema; effort intent is documented in `DEPENDENCIES.md`.)
+- Agent frontmatter (validator is stricter than the runtime — match the strict
+  schema or Cowork rejects the install): `name`, `description`, `model` (one of
+  `inherit`/`sonnet`/`opus`/`haiku`), **`color`** (required — one of `blue`, `cyan`,
+  `green`, `yellow`, `magenta`, `red`), and `tools` as a **YAML array**
+  (`tools: ["Read", "Grep"]`, **not** a comma-separated string). No `effort:` field
+  — not in the schema; effort intent is documented in `DEPENDENCIES.md`. Keep each
+  agent's `color` distinct.
+- Command frontmatter: keep `description` **≤60 chars** (`/help` display). Leave
+  `argument-hint` brackets **unquoted** — bare `[arg] [arg]` is the canonical form.
 - Reference other plugin files as `${CLAUDE_PLUGIN_ROOT}/path`.
 - Keep comments/prose tight; this is a fast-moving internal tool.
 

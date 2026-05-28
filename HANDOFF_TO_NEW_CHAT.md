@@ -1,4 +1,4 @@
-# Hand-off prompt — testing antrop-personas v0.11.5-rc2 in a fresh chat
+# Hand-off prompt — testing antrop-personas v0.11.5-rc3 in a fresh chat
 
 Copy-paste the prompt below into a fresh Cowork session that has the `Claude personas/` folder mounted.
 
@@ -31,7 +31,7 @@ The plugin doesn't have to match the human exactly. It has to be *defensible aga
 
 ```
 Claude personas/
-├── antrop-personas-0.11.5-rc2.plugin    # the installable
+├── antrop-personas-0.11.5-rc3.plugin    # the installable
 ├── plugin-source/                       # editable source (for tweaks)
 ├── Exempeldata/                         # sample projects to test against
 │   ├── AMF with manual personas/        # ← Mode B candidate: has manual personas
@@ -65,7 +65,7 @@ At the top level, also expect:
 
 | File | Required for | If missing |
 |------|--------------|------------|
-| `antrop-personas-0.11.5-rc2.plugin` | Installing the plugin | Stop |
+| `antrop-personas-0.11.5-rc3.plugin` | Installing the plugin | Stop |
 | `plugin-source/` | Manifest/agent/setting reads | Stop |
 | `VALIDATION_REPORT.md` | Context | Stop |
 | `REBUILD.md` | Only if fixes are made | Skip silently |
@@ -76,7 +76,7 @@ At the top level, also expect:
 
 ```
 I want to do an end-to-end production test of the antrop-personas plugin
-v0.11.5-rc2. Everything you need is in the Claude personas folder — that's
+v0.11.5-rc3. Everything you need is in the Claude personas folder — that's
 your only mount.
 
 Goal: validate the plugin works correctly on real interview material.
@@ -122,7 +122,7 @@ After step 5g (package-for-client), run an extra step 5h:
 
 Procedure:
 
-1. Install antrop-personas-0.11.5-rc2.plugin if it isn't already active.
+1. Install antrop-personas-0.11.5-rc3.plugin if it isn't already active.
    Confirm /antrop-personas:start-persona-project is available.
 
 2. Run /antrop-personas:start-persona-project <project-name> to scaffold
@@ -263,4 +263,4 @@ This session loaded the plugin's skills at session start. That means:
 - Agent invocations are different from a fresh install
 - The token budget for parallel `interview-reader` calls is reduced
 
-A fresh chat is the difference between "structurally complete" (where v0.11.5-rc2 is) and "actually works in production" (where v1.0.0 needs to be).
+A fresh chat is the difference between "structurally complete" (where v0.11.5-rc3 is) and "actually works in production" (where v1.0.0 needs to be).

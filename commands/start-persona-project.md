@@ -1,5 +1,5 @@
 ---
-description: Scaffold a persona-research project and choose where to start
+description: Scaffold a persona project and choose where to start
 argument-hint: [project-name] [--input-dir <path>] [--baseline <path>] [--auto] [--run-all]
 allowed-tools: Read, Write, Bash, AskUserQuestion, Glob
 ---

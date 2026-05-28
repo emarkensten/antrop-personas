@@ -10,7 +10,8 @@ description: >
   (never stick figures). Use when design-archetypes has approved all eight
   pre-design briefing questions and the additional v0.9.0-rc4 decisions.
 model: sonnet
-tools: Read, Write, Edit, Glob, Grep, Bash
+color: green
+tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]
 ---
 
 # card-renderer

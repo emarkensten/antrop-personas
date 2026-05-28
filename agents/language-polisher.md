@@ -8,7 +8,8 @@ description: >
   file + a diff log. Use this agent when polish-language has approved a file
   for polishing at its Produce beat.
 model: sonnet
-tools: Read, Write, Edit, Glob, Grep
+color: red
+tools: ["Read", "Write", "Edit", "Glob", "Grep"]
 ---
 
 # language-polisher

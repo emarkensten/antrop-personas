@@ -10,7 +10,8 @@ description: >
   analyse-themes, frame-and-cluster, generate-archetypes, and
   validate-archetypes.
 model: haiku
-tools: Read, Glob, Grep
+color: blue
+tools: ["Read", "Glob", "Grep"]
 ---
 
 # interview-reader

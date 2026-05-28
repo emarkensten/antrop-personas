@@ -6,7 +6,28 @@ The early release-candidate history (rc5–rc7) was not documented in detail at 
 time; the entries below reconstruct it honestly from the manifest, the validation
 report, and the source. Only the headline changes are recorded for those.
 
-## [0.11.5-rc2] — 2026-05 (current)
+## [0.11.5-rc3] — 2026-05 (current)
+
+Second compatibility pass after rc2 still failed Cowork's install. The blocker
+was the **agent** files, not skill metadata. Verified against Anthropic's own
+`plugin-dev` → `agent-development` schema (which the `plugin-validator` agent
+enforces): agent frontmatter requires `color` and expects `tools` as an **array**.
+The Claude Code *runtime* loader is lenient (the plugin installed locally without
+them), but the *validator* is strict — that gap is why rc2 passed locally yet
+failed in Cowork.
+
+- All 6 agents: added a required `color` (distinct per agent: interview-reader
+  blue, thematic-analyser cyan, archetype-drafter magenta, card-renderer green,
+  audit-runner yellow, language-polisher red) and converted `tools` from a
+  comma-separated string to a YAML array.
+- `commands/start-persona-project.md`: shortened `description` to 52 chars (the
+  command schema recommends ≤60 for `/help` display). Left `argument-hint`
+  unquoted — bare brackets are the canonical form per the official reference.
+- `CLAUDE.md`: documented the agent-frontmatter rules so they can't regress.
+
+No behavioural change — same 11 skills / 6 agents / 1 command.
+
+## [0.11.5-rc2] — 2026-05
 
 Compatibility pass so the plugin installs under stricter validators (Cowork
 reported "Plugin validation failed" where the local CLI accepted it). Removed

@@ -9,7 +9,8 @@ description: >
   reached its Produce beat with locked clusters and an approved archetype
   line-up.
 model: opus
-tools: Read, Write, Edit, Glob, Grep, Bash
+color: magenta
+tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]
 ---
 
 # archetype-drafter

@@ -9,7 +9,8 @@ description: >
   the heatmap data the parent skill renders. Use when validate-archetypes has
   approved scope and depth.
 model: opus
-tools: Read, Write, Edit, Glob, Grep, Task
+color: yellow
+tools: ["Read", "Write", "Edit", "Glob", "Grep", "Task"]
 ---
 
 # audit-runner
