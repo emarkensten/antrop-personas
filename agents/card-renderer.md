@@ -9,8 +9,7 @@ description: >
   persona's three special-treatment features and the portrait fallback ladder
   (never stick figures). Use when design-archetypes has approved all eight
   pre-design briefing questions and the additional v0.9.0-rc4 decisions.
-model: claude-sonnet-4-6
-effort: high
+model: sonnet
 tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 

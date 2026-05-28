@@ -7,8 +7,7 @@ description: >
   quotes, audit verdicts, role labels, or technical terms. Returns the polished
   file + a diff log. Use this agent when polish-language has approved a file
   for polishing at its Produce beat.
-model: claude-sonnet-4-6
-effort: high
+model: sonnet
 tools: Read, Write, Edit, Glob, Grep
 ---
 

@@ -8,8 +8,7 @@ description: >
   pairs, triangulation + saturation. Writes the working audit-findings.md and
   the heatmap data the parent skill renders. Use when validate-archetypes has
   approved scope and depth.
-model: claude-opus-4-8
-effort: xhigh
+model: opus
 tools: Read, Write, Edit, Glob, Grep, Task
 ---
 

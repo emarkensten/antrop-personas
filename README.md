@@ -2,7 +2,7 @@
 
 Antrop's qualitative-research pipeline for behavioural personas — from raw interview to brand-designed deliverable. **Eleven** skills — eight checkpoint-gated main-path steps plus two opt-in side-branches that keep the analyst as the decision-maker and Claude as the heavy-lifter, plus a `run-pipeline` orchestrator for unattended end-to-end runs.
 
-Built from the Naturvårdsverket v1 project (Stockholm, 2026); v0.11.4-rc1 bakes in lessons from the second end-to-end test (2026-05-28) — Excel as the working format for frame-and-cluster, narrative prose on the back of every persona card, AI-photo portraits with locked series style, baseline comparison as a built-in capability, and a dedicated language-polish pass.
+Built from the Naturvårdsverket v1 project (Stockholm, 2026); v0.11.5-rc1 bakes in lessons from the second end-to-end test (2026-05-28) — Excel as the working format for frame-and-cluster, narrative prose on the back of every persona card, AI-photo portraits with locked series style, baseline comparison as a built-in capability, and a dedicated language-polish pass.
 
 ## What this plugin does
 
@@ -134,7 +134,7 @@ This plugin is currently tuned for Antrop's workflow. If you fork it for another
 
 ## Version
 
-**0.11.4-rc1** — release candidate. Incorporates all HIGH + MEDIUM improvements from `IMPROVEMENT_SPEC_v0.9.0-rc4.md` and the post-rc3 E2E test (2026-05-28).
+**0.11.5-rc1** — release candidate. Incorporates all HIGH + MEDIUM improvements from `IMPROVEMENT_SPEC_v0.9.0-rc4.md` and the post-rc3 E2E test (2026-05-28).
 
 New in 0.10.0: **autonomous mode** (`process.mode: auto`) and the **`run-pipeline`** orchestrator skill, for unattended scheduled/overnight runs that produce full-quality personas (AI portraits + print-PDF) with documented defaults logged for a morning review. Distinct from `dry-run` and `skip-checkpoints`.
 

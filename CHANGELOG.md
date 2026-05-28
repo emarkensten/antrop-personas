@@ -6,7 +6,27 @@ The early release-candidate history (rc5–rc7) was not documented in detail at 
 time; the entries below reconstruct it honestly from the manifest, the validation
 report, and the source. Only the headline changes are recorded for those.
 
-## [0.11.4-rc1] — 2026-05 (current)
+## [0.11.5-rc1] — 2026-05 (current)
+
+Compatibility pass so the plugin installs under stricter validators (Cowork
+reported "Plugin validation failed" where the local CLI accepted it). Removed
+every non-standard manifest/frontmatter element:
+
+- `plugin.json`: removed the non-standard `metadata` block (dependencies /
+  components / documentation). That information lives in `DEPENDENCIES.md`,
+  `README.md`, and `VALIDATION_REPORT.md` — it was never functional in the
+  manifest. Now only standard keys remain (name/version/description/author/keywords).
+- Agents: removed the non-standard `effort:` frontmatter field (kept the intent
+  documented in `DEPENDENCIES.md` § delegation), and switched `model:` from full
+  IDs to the portable `opus` / `sonnet` / `haiku` aliases (which resolve to the
+  current top model per tier).
+- The packaged `.plugin` archive no longer bundles `marketplace.json` (a direct
+  plugin install only needs `plugin.json`; the marketplace manifest stays in the
+  repo for the local-marketplace install path).
+
+No behavioural change to the pipeline — same 11 skills / 6 agents / 1 command.
+
+## [0.11.4-rc1] — 2026-05
 
 - **Corrected portrait-model guidance** in `DEPENDENCIES.md` after checking the
   live model list (2026-05-29) and the Nano Banana naming. Both relevant models

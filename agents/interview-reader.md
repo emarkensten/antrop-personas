@@ -9,8 +9,7 @@ description: >
   context. Cheap, fast, parallelisable — designed to be the "first reader" for
   analyse-themes, frame-and-cluster, generate-archetypes, and
   validate-archetypes.
-model: claude-haiku-4-5-20251001
-effort: medium
+model: haiku
 tools: Read, Glob, Grep
 ---
 

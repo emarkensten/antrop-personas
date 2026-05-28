@@ -7,8 +7,7 @@ description: >
   the per-theme evaluation block. Use this agent when analyse-themes has a
   digest set ready and wants to delegate the heavy synthesis work without
   losing the analyst checkpoint upstream.
-model: claude-opus-4-8
-effort: high
+model: opus
 tools: Read, Write, Edit, Glob, Grep
 ---
 

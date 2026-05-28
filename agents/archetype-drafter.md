@@ -8,8 +8,7 @@ description: >
   self-check before returning. Use this agent when generate-archetypes has
   reached its Produce beat with locked clusters and an approved archetype
   line-up.
-model: claude-opus-4-8
-effort: xhigh
+model: opus
 tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
