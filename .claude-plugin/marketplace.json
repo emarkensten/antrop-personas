@@ -10,10 +10,7 @@
   "plugins": [
     {
       "name": "antrop-personas",
-      "source": {
-        "source": "local",
-        "path": "."
-      },
+      "source": "./",
       "description": "Eleven skills from raw interview to Antrop-branded persona deliverable — Excel framework, double-sided cards, narrative prose, AI portraits, Swedish polish pass, baseline comparison. Checkpoint-gated and interactive by default, with an autonomous run-pipeline mode for unattended scheduled runs.",
       "version": "0.11.3-rc1",
       "keywords": [

@@ -8,6 +8,11 @@ report, and the source. Only the headline changes are recorded for those.
 
 ## [0.11.3-rc1] — 2026-05 (current)
 
+- **Fixed an install blocker.** `marketplace.json` `plugins[].source` was an object
+  (`{source:"local",path:"."}`) which the current `claude plugin validate` rejects
+  (`plugins.0.source: Invalid input`). Changed to the string form `"./"`. The
+  plugin now passes `claude plugin validate` and installs via the CLI.
+
 - **Documented the current portrait model.** `DEPENDENCIES.md` now names the
   correct, verified image model — `gemini-3-pro-image` (Nano Banana Pro), used at
   `image_size: "2K"`, `aspect_ratio: "4:5"` — with `gemini-2.5-flash-image` as the
