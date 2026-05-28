@@ -1,0 +1,286 @@
+<!--
+  Antrop persona-card template — A3 landscape, double-sided (front + back) per persona.
+  See ../antrop-design-spec.md for layout and brand rules.
+  See ./antrop-design-tokens.css for colours, fonts, type scale.
+  See ./portrait-style.md for the locked AI-photo brief (D2).
+
+  How to use:
+  1. Paste this whole file to start a new persona-cards.html.
+  2. For each persona, duplicate BOTH the .persona-card.front AND .persona-card.back blocks.
+  3. Set the role class (primary-1, primary-2, supplemental, negative, outlier) on both front and back.
+  4. Fill in: name, age, role-tagline, composite-from, AI-photo src (or .initials-disc fallback), sketch, goals, frustrations, theme chips, pull-quote, narrative (≥200 words on .back), pull-quotes sidebar.
+  5. Audit badges (E2): when hide-audit-markers is no, add <span class="audit-badge thin|over-reach|ungrounded"></span> next to flagged fields.
+  6. Print to PDF from a browser at A3 landscape, margins: none. Double-sided gives 2N pages.
+-->
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <title>Persona Cards — <client-name></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..900&family=Plus+Jakarta+Sans:wght@200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Familjen+Grotesk:wght@400..700&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="antrop-design-tokens.css">
+  <style>
+    /* Page-specific overrides go here. */
+
+    /* Front-back specific layout */
+    .persona-card.back {
+      grid-template-rows: auto 1fr auto;
+    }
+    .persona-card.back .narrative {
+      font-family: var(--font-body);
+      font-size: 13pt;
+      line-height: 1.55;
+      column-count: 2;
+      column-gap: 14mm;
+      max-width: 320mm;
+    }
+    .persona-card.back .narrative p {
+      margin-top: 0;
+      margin-bottom: 1em;
+      break-inside: avoid;
+    }
+    .persona-card.back .pullquotes-sidebar {
+      border-top: 0.5pt solid currentColor;
+      padding-top: 6mm;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8mm;
+    }
+    .persona-card.back .pullquotes-sidebar blockquote {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 14pt;
+      line-height: 1.3;
+    }
+    .persona-card.back .pullquotes-sidebar .attribution {
+      font-family: var(--font-mono);
+      letter-spacing: var(--letter-spacing-mono);
+      text-transform: uppercase;
+      font-size: var(--size-label);
+      opacity: 0.7;
+      margin-top: 4mm;
+    }
+
+    /* Initials-disc fallback (D1b) — when AI photo generation fails */
+    .initials-disc {
+      width: 110mm; height: 110mm;
+      border-radius: 50%;
+      background: var(--accent-bg, currentColor);
+      color: var(--accent-text, white);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 64pt;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    /* Audit badges (E2) */
+    .audit-badge {
+      display: inline-block;
+      width: 9pt; height: 9pt;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-left: 6pt;
+    }
+    .audit-badge.thin        { background: #E5C547; }   /* yellow */
+    .audit-badge.over-reach  { background: #E07A5F; }   /* orange */
+    .audit-badge.ungrounded  { background: #C0392B; }   /* red */
+
+    .audit-legend {
+      position: absolute;
+      bottom: 14mm;
+      right: 26mm;
+      font-family: var(--font-mono);
+      font-size: 7pt;
+      letter-spacing: var(--letter-spacing-mono);
+      text-transform: uppercase;
+      opacity: 0.6;
+      display: flex; gap: 12px;
+    }
+
+    /* AI-portrait disc (D1b) — replaces the old illustration-disc */
+    .portrait-disc {
+      width: 110mm; height: 110mm;
+      border-radius: 50%;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+    }
+    .portrait-disc img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    /* AI disclaimer footer */
+    .ai-disclaimer {
+      font-family: var(--font-mono);
+      font-size: 7pt;
+      letter-spacing: var(--letter-spacing-mono);
+      text-transform: uppercase;
+      opacity: 0.5;
+      position: absolute;
+      bottom: 8mm;
+      left: 26mm;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Cover page (optional) -->
+<section class="persona-card primary-2 cover">
+  <header class="topbar">
+    <span class="eyebrow">CLIENT · <client> · COOPER-STYLE BEHAVIOURAL PERSONAS</span>
+    <span class="page-number">00 / 05</span>
+  </header>
+  <h1 class="persona-name">Behavioural <em>archetypes.</em></h1>
+  <p class="role-tagline">
+    Four primary archetypes plus one outlier — synthesised from <N> interviews
+    via the locked <M>-variable framework. Two primaries are the design
+    targets; one is treated as a calibration constraint; one as a negative
+    persona; one as a margin note.
+  </p>
+  <footer class="legend">
+    <!-- One column per persona, with thin colour rule above the name -->
+  </footer>
+</section>
+
+<!-- Primary archetype — FRONT (page 1 of 2) -->
+<section class="persona-card primary-1 front">
+  <header class="topbar">
+    <span class="eyebrow">● PRIMARY · DESIGN TARGET</span>
+    <span class="page-number">01 / 10</span>
+  </header>
+
+  <div class="hero">
+    <h1 class="persona-name">Anna<span class="persona-age">, 38</span></h1>
+    <p class="role-tagline"><em>The Caregiver<br>Under Load.</em></p>
+  </div>
+
+  <p class="composite">COMPOSITE OF IP02 (34, IT CONSULTANT, TWO YOUNG KIDS) · IP04 (41, PROJECT MANAGER, THREE KIDS)</p>
+
+  <div class="content-grid">
+    <!--
+      Portrait slot: AI-photo by default (D1b).
+      If gemini-image-gen failed → swap to .initials-disc, NEVER to a stick figure.
+    -->
+    <div class="portrait-disc">
+      <img src="portraits/01-anna.jpg" alt="AI-generated portrait of Anna">
+    </div>
+    <!-- Fallback example, uncomment if AI generation failed:
+    <div class="initials-disc">AN</div>
+    -->
+
+    <div class="drivers">
+      <p class="eyebrow">DRIVKRAFTER — VAD RÖR HENNE<span class="audit-badge thin" title="audit: THIN — only one weak supporting quote"></span></p>
+      <ul>
+        <li>Mata familjen utan att tömma sig själv.</li>
+        <li>Hålla hushållet i funktion — sluta lägga beslut på en logistisk operation.</li>
+        <li>Förbli grovt trogen sina värderingar. Smyganpassning är OK.</li>
+      </ul>
+    </div>
+
+    <div class="pains">
+      <p class="eyebrow">SMÄRTOR — VAD STOPPAR HENNE</p>
+      <ul>
+        <li>Mental belastning mättad i matlagningsögonblicket.</li>
+        <li>Konflikt vid middagsbordet när hon byter rakt på — ett barn som gråter över linssoppa är ett för mycket.</li>
+        <li>Informationsöverflöd vid hyllan — svensk kyckling vs brasiliansk soja, ekologisk vs konventionell.</li>
+        <li>Kampanjer som ökar skuldkänslan utan att minska bördan.<span class="audit-badge over-reach" title="audit: OVER-REACH"></span></li>
+      </ul>
+    </div>
+
+    <div class="needs">
+      <p class="eyebrow">BEHOV — VAD SKULLE HJÄLPA</p>
+      <ul>
+        <li>Praktiskt beslutsstöd: matplaner, tydliga märkningar, byten en måltid i taget.</li>
+        <li>Realistisk prisbild — inte premium-positioning för det "klimatsmarta".</li>
+        <li>Erkännande att hon redan bryr sig så mycket hon mäktar med.</li>
+      </ul>
+      <div class="themes">
+        <span class="theme-chip">THEME 5 · BANDWIDTH TAX</span>
+        <span class="theme-chip">THEME 4 · EATING IS SOCIAL</span>
+        <span class="theme-chip">THEME 1 · BARGAINED SUSPENSION</span>
+      </div>
+    </div>
+
+    <p class="sketch">
+      Mid-career professional, partnered, two or three children at home, dual-income household.
+      Cares about climate and has not stopped caring; her food behaviour is governed almost entirely
+      by the constraints of feeding people who have opinions, on a schedule that does not bend.
+    </p>
+  </div>
+
+  <footer class="quote-band">
+    <p class="pull-quote">"My mental load is already maxed out. Adding more decisions to it is hard. The idea of introducing some new sustainable meal plan feels exhausting before it's even started."</p>
+    <p class="quote-attribution">— INTERVIEW 02</p>
+  </footer>
+
+  <div class="audit-legend">
+    <span><span class="audit-badge thin"></span> THIN</span>
+    <span><span class="audit-badge over-reach"></span> OVER-REACH</span>
+    <span><span class="audit-badge ungrounded"></span> UNGROUNDED</span>
+  </div>
+
+  <p class="ai-disclaimer">AI-genererat porträtt — inte en riktig person.</p>
+</section>
+
+<!-- Primary archetype — BACK (page 2 of 2) C3 -->
+<section class="persona-card primary-1 back">
+  <header class="topbar">
+    <span class="eyebrow">● PRIMARY · DESIGN TARGET · NARRATIVE</span>
+    <span class="page-number">02 / 10</span>
+  </header>
+
+  <div class="narrative">
+    <p>
+      Anna is up at 06:20 every weekday. Coffee, two lunchboxes, school drop-off, train,
+      open standup. By 09:00 she has already made forty decisions, none of them about food
+      that matters to her. Her own breakfast was a piece of toast eaten standing up. She
+      doesn't quite remember it.
+    </p>
+    <p>
+      She used to read every label. There's a memory of standing in front of the chicken
+      shelf in 2018, looking up Brazilian soy on her phone. Now she reaches for the same
+      thing she reached for last week, because that decision has been pre-made. She still
+      cares — that hasn't gone — but the cost of caring at the shelf has become the cost
+      of caring everywhere, and everywhere is more than she has.
+    </p>
+    <p>
+      At home, dinner is the place where her values and her household collide. One child
+      will not eat lentils. The other one might, but only if his sister does. Her partner
+      cooks twice a week and defaults to what works. The result is a kitchen that does the
+      same five dinners on rotation, and a low-grade guilt about it that she carries quietly.
+    </p>
+    <p>
+      She is open to change but not to friction. A meal-plan service that did the thinking
+      for her — that priced realistically, that swapped one weekly meal at a time — would
+      move her. A campaign that tells her she should care more would not. She is already
+      caring as hard as she can afford to.
+    </p>
+  </div>
+
+  <aside class="pullquotes-sidebar">
+    <div>
+      <blockquote>"Min mentala belastning är redan maxad. Att lägga till fler beslut är svårt."</blockquote>
+      <p class="attribution">— INTERVIEW 02 · LINE 142</p>
+    </div>
+    <div>
+      <blockquote>"Det är samma fem middagar i veckan. Det är inte vad jag skulle välja om jag fick välja från noll."</blockquote>
+      <p class="attribution">— INTERVIEW 04 · LINE 88</p>
+    </div>
+    <div>
+      <blockquote>"Jag bryr mig — jag har bara inte plats för att bry mig mer just nu."</blockquote>
+      <p class="attribution">— INTERVIEW 04 · LINE 211</p>
+    </div>
+  </aside>
+</section>
+
+<!-- More archetypes: duplicate the front + back pair, change the role class. -->
+<!-- Negative card includes the strategy-banner footer on the front; see antrop-design-tokens.css -->
+<!-- Sub-variant mini-cards (D5) follow the parent's back, before the next front -->
+<!-- Outliers card (H1) goes at the end of the deck -->
+
+</body>
+</html>

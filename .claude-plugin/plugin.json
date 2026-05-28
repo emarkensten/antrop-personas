@@ -1,0 +1,42 @@
+{
+  "name": "antrop-personas",
+  "version": "0.9.0-rc7.1",
+  "description": "Antrop's qualitative-research pipeline for behavioural personas — from raw interview to brand-designed deliverable. Ten checkpoint-gated skills (clean, analyse, frame-and-cluster, generate, compare-baseline, validate, design, polish-language, package, interview-cards) that keep the analyst as the decision-maker and Claude as the heavy-lifter. Eight required steps + two opt-in side-branches. Tuned for Opus 4.8 (xhigh effort on the quality-critical agents) and Sonnet 4.6 (Swedish polish + card rendering). Built from Naturvårdsverket v1 (2026), with pitfalls baked in as warnings.",
+  "author": {
+    "name": "Antrop"
+  },
+  "keywords": [
+    "personas",
+    "qualitative-research",
+    "ux-research",
+    "cooper-personas",
+    "thematic-analysis",
+    "antrop",
+    "behavioural-archetypes",
+    "baseline-comparison"
+  ],
+  "metadata": {
+    "dependencies": {
+      "required": [
+        "docx",
+        "xlsx"
+      ],
+      "recommended": [
+        "gemini-image-gen",
+        "canvas-design"
+      ]
+    },
+    "components": {
+      "skills": 10,
+      "commands": 1,
+      "agents": 6,
+      "hooks": 0,
+      "mcpServers": 0
+    },
+    "documentation": {
+      "dependencies": "DEPENDENCIES.md",
+      "settings": "settings/local.md.example",
+      "validation-report": "VALIDATION_REPORT.md"
+    }
+  }
+}

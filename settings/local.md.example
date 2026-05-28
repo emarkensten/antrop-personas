@@ -1,0 +1,251 @@
+# Project-local configuration for antrop-personas
+
+Copy this file to `personas-project/<project-name>/.persona-config.md` and edit. Every skill in the plugin reads this file at its **Read** beat (the first step of the five-beat flow) and uses it to override defaults.
+
+If the file is absent, the plugin's built-in defaults apply (Swedish, Naturvårdsverket v1 anonymisation policy, Antrop brand). The file is plain markdown so the analyst can hand-edit it without YAML/TOML errors.
+
+---
+
+## project (P4-fix)
+
+```
+effect-goals-path: effektmål.md
+brief-path: project-brief.md
+```
+
+- `effect-goals-path` — relative path (from the project root) to a markdown file with 1–3 measurable effect goals the project is trying to drive. Default `effektmål.md` in the project root. Read by `generate-archetypes` at its Propose beat to anchor the Cooper primary-persona prioritisation. If the file is empty or missing, the skill prompts the analyst for the goals inline before composing.
+- `brief-path` — relative path to a one-page project brief (deliverable, audience, scope, constraints, success criteria). Default `project-brief.md`. Same prompt-if-missing behaviour as effect-goals-path.
+
+These two inputs drive *which* archetype becomes PRIMARY. Without them, the prioritisation is made on cluster size alone (Cooper's rule of one primary still applies, but the choice is less defensible).
+
+---
+
+## interviews
+
+```
+input-dir: (default: personas-project/<project>/01-interviews/)
+discovery-pattern: **/*.{pdf,docx,md,txt}
+```
+
+- `input-dir` — absolute or relative path to the folder where raw interview files live. If blank, the default `personas-project/<project>/01-interviews/` is used. Set via `--input-dir` on `start-persona-project` or edit by hand. The skill `clean-interview` auto-discovers files recursively under this path.
+- `discovery-pattern` — glob pattern used during auto-discovery. The default picks up `.pdf`, `.docx`, `.md`, `.txt`. Override only if the project uses non-standard extensions.
+
+---
+
+## compare-baseline
+
+```
+baseline-path: (none)
+auto-prompt-after-generate: yes
+```
+
+- `baseline-path` — absolute or relative path to a previous persona deliverable to compare against (PDF, docx, markdown folder, or zip). Set via `--baseline` on `start-persona-project` or edit by hand. When set, the plugin asks "want to run compare-baseline now?" after `generate-archetypes` completes.
+- `auto-prompt-after-generate` — `yes` (default) means surface the comparison prompt automatically. `no` keeps the skill available but doesn't nudge.
+
+---
+
+## language
+
+```
+default: sv
+client-deliverable: sv
+allow-mixed-quotes: yes
+```
+
+- `default` — `sv` or `en`. Controls analytical writing across every skill (`themes.md`, `behavioural-variables.md`, `archetypes.md`, `audit-findings.md`, cover document). Default `sv`.
+- `client-deliverable` — the language of the final designed cards and the cover document. Usually equals `default`.
+- `allow-mixed-quotes` — `yes` (default) means quotes stay in their source language with optional translation; `no` means everything translates to `client-deliverable` (rare; usually only for English-speaking client readouts).
+
+---
+
+## anonymisation
+
+```
+policy: stockholm-carve-out
+city-keep-list: Stockholm, Hornsgatan, Södermalm, Sofo, Sofo, Mariatorget, Liljeholmen
+city-redact-everywhere-else: yes
+indirect-identifier-strictness: high
+age-bracket-rule: explicit-statement-only
+```
+
+- `policy` — one of:
+  - `stockholm-carve-out` (default for Antrop projects) — Stockholm-internal neighbourhoods kept, everything outside Stockholm redacted to `[city]`
+  - `redact-all-locations` — all city/neighbourhood names redacted regardless
+  - `keep-all-locations` — no location redaction (rarely appropriate)
+  - `custom` — see `anonymisation-policy.md` in the same folder, written by hand
+- `city-keep-list` — places that are kept verbatim. Only meaningful when policy is `stockholm-carve-out` or `custom`.
+- `city-redact-everywhere-else` — `yes` (default) redacts any city not in the keep-list to `[city]`.
+- `indirect-identifier-strictness` — `high` (default) flags every name + role + neighbourhood combination as a judgement call in the cleaning-summary. `medium` flags only ≥3-element combinations. `low` only flags the most obvious cases.
+- `age-bracket-rule` — `explicit-statement-only` (default) means age headers are only filled in if the participant explicitly stated their age. `triangulation-allowed` lets Claude back-calculate from context cues (e.g. "Fridays for Future participant at 17") — but this is the NV-v1 pitfall, so use with care.
+
+---
+
+## methodology
+
+```
+thematic-analysis: reflexive-ta
+personas: cooper
+design: antrop-brand
+ask-first: yes
+```
+
+- `thematic-analysis` — default for `analyse-themes`. Options: `reflexive-ta`, `framework-analysis`, `grounded-theory`, `ipa`.
+- `personas` — default for `frame-and-cluster` / `generate-archetypes`. Options: `cooper`, `jobs-to-be-done`, `lightweight-archetypes`.
+- `design` — default for `design-archetypes`. Options: `antrop-brand` (full spec), `client-brand` (requires `client-brand.md` in the same folder), `generic`.
+- `ask-first` — `yes` (default) means the skill asks the user even if a default is set in this file. `no` accepts the configured default silently. Recommend keeping `yes` — the cross-cutting principle "methodology choice is the first question" exists for a reason.
+
+---
+
+## brand-overrides
+
+```
+brand-spec: default
+illustrations-dir: (none)
+print-spec: a3-landscape-fogra39
+allow-gemini-image-fallback: yes
+photo-policy: ai-photo
+portrait-style-file: skills/design-archetypes/references/portrait-style.md
+use-canvas-design: yes
+double-sided-cards: yes
+render-sub-variants: no
+render-edge-cases: yes
+hide-audit-markers: no
+emit-design-handoff: yes
+card-front-columns: 3
+palette: light
+client-palette-file: (none)
+behavior-scale: yes
+```
+
+- `brand-spec` — `default` uses the Antrop spec at `skills/design-archetypes/references/antrop-design-spec.md`. To override, drop a `client-brand.md` next to this file and set `brand-spec: client-brand.md`.
+- `illustrations-dir` — absolute path to a directory of stipple illustrations. If `(none)`, `design-archetypes` falls back to AI portraits via `gemini-image-gen` (if `allow-gemini-image-fallback: yes`).
+- `print-spec` — `a3-landscape-fogra39` (default) or one of `a3-landscape-rgb`, `a4-portrait-fogra39`, `a4-portrait-rgb`.
+- `allow-gemini-image-fallback` — `yes` (default) lets `card-renderer` generate portraits via the `gemini-image-gen` skill when no library is available. `no` halts and asks the analyst.
+- `photo-policy` — **hard default `ai-photo`** (D1b). Controls what fills the portrait slot when no Antrop stipple illustration is available. Options:
+  - `ai-photo` — realistic-but-generic AI-generated portrait via `gemini-image-gen` (default)
+  - `initials-disc` — large accent-coloured disc with IP-id or initials (the only acceptable fallback when AI generation fails)
+  - `stipple` — explicit stipple library or stipple-style AI
+  - `illustration` — Antrop's hand-drawn illustration library
+  - `animal` — animal-portrait set (project-specific decision)
+  - `none` — empty disc (use sparingly; reads as placeholder)
+  **Forbidden under every setting:** geometric stick figures, empty silhouettes, abstract geometric portraits. See `card-renderer.md` "hard rules".
+- `portrait-style-file` — pointer to the locked portrait-style brief (D2). Defaults to `skills/design-archetypes/references/portrait-style.md`. The brief locks colour palette, composition, lighting, stipple density, seed-control across a series.
+- `use-canvas-design` — `yes` (default) routes the final render through the `canvas-design` skill for print-PDF iteration. `no` keeps the inline WeasyPrint render only.
+- `double-sided-cards` — `yes` (default) produces 2-sided A3 — front (visual) + back (narrative prose). `no` is single-sided front only.
+- `render-sub-variants` — `no` (default) produces one card per archetype. `yes` adds A5 satellite mini-cards per sub-variant with the same colour family.
+- `render-edge-cases` — `yes` (default) produces an "Outliers" card listing edge-zone participants. `no` hides this from the deliverable.
+- `hide-audit-markers` — `no` (default) shows THIN / OVER-REACH / UNGROUNDED badges per field per card. `yes` produces a clean client-version with no audit annotations.
+- `emit-design-handoff` — `yes` (default) emits the `06-design/design-handoff/` folder (raw material for a designer or claude/design session). `no` skips it.
+- `card-front-columns` — `3` (default, G9-fix) renders three columns on the front (Drivkrafter, Smärtor, Behov), mapping all three Cooper-template sections directly. `2` falls back to the legacy two-column layout (Drivkrafter + Smärtor) and moves Behov to the back card under the narrative. Use `3` for client deliverables; `2` only when character count is tight (workshop posters with long bullets).
+- `palette` — colour-system for the cards (P1-fix). Options:
+  - `light` (default since v0.9.0-rc5) — light surfaces (`#FBF8F2`) with per-persona accent rule at the top of each card. Most legible, most adaptable across clients.
+  - `dark` — Antrop's legacy dark surfaces (vinröd, mörkblå, mörkgrön). Kept as explicit opt-in for projects that want the dark brand world.
+  - `client` — uses a project-supplied `client-palette.css` (see below). Use when the client has their own brand palette.
+- `client-palette-file` — `(none)` (default) or path to a `client-palette.css` file under `personas-project/<project>/`. Only consulted when `palette: client`. The file must redefine `--primary-1-bg / --primary-1-text / --primary-1-accent` (and the same trio for `primary-2`, `supplemental`, `negative`, `outlier`) under `:root` or under `body.palette-client`. card-renderer imports it via a `<link rel="stylesheet">` after the default tokens.
+- `behavior-scale` — `yes` (default, G10) renders a dot-scale column on the front of each card showing 3–5 of the most-differentiating behavioural variables. card-renderer reads `03-framework/behavioural-variables.xlsx`, computes between-cluster variance per variable, and picks the highest-variance variables. `no` hides the scale (use when the framework wasn't built in Cooper-style or the xlsx isn't available).
+
+---
+
+## process
+
+```
+strict-checkpoints: yes
+skip-checkpoints: no
+dry-run: no
+require_analyst_approval_checkpoints:
+  - frame-and-cluster:B2
+  - generate-archetypes:I1
+  - design-archetypes:D0
+```
+
+- `strict-checkpoints` — `yes` (default, I1) means the three analyst-approval checkpoints (B2 after `frame-and-cluster`, I1 after `generate-archetypes`, D0 before `design-archetypes`) BLOCK pipeline progress until the analyst explicitly says "fortsätt" / "continue". Other checkpoints are also enforced but recoverable. `no` lets every checkpoint be skipped silently — discouraged.
+- `skip-checkpoints` — `yes` skips even the strict ones (test mode). Triggers a loud warning: *"You have skipped critical analytical checkpoints — deliverable quality may be reduced."* Use only when running synthetic test cases. **Important:** a session-level instruction such as "kör på defaultvärden utan frågor" does **not** count as setting this flag — only an explicit `skip-checkpoints: yes` in `.persona-config.md` bypasses these. See `references/cross-cutting-principles.md` § "What `strict-checkpoints: yes` is **not** overridden by".
+- `require_analyst_approval_checkpoints` — list of `<skill>:<beat-id>` entries that must hold an analyst-approval gate even under "no questions" framing. Default covers the three load-bearing analytical decisions. The analyst may add (e.g. `validate-archetypes:V0`) or remove entries by hand-editing. Removing an entry is an explicit analyst choice and does not emit a warning.
+- `dry-run` — `yes` (I2) runs every skill in preview mode:
+  - `frame-and-cluster` plots only 8 of N interviews
+  - `generate-archetypes` produces bullets only, no narrative
+  - `design-archetypes` renders one representative card, not all
+  - `interview-cards` renders 3 representative cards, not all
+  - `validate-archetypes` runs `--depth=fast` (traceability + coherence + orphans only)
+  Use for iteration. Always re-run with `dry-run: no` before delivering.
+
+---
+
+## delegation
+
+```
+parallel-interview-reader: auto
+max-parallel-readers: 6
+interview-reader-model: claude-haiku-4-5-20251001
+interview-reader-effort: medium
+thematic-analyser-model: claude-opus-4-8
+thematic-analyser-effort: high
+archetype-drafter-model: claude-opus-4-8
+archetype-drafter-effort: xhigh
+audit-runner-model: claude-opus-4-8
+audit-runner-effort: xhigh
+card-renderer-model: claude-sonnet-4-6
+card-renderer-effort: high
+language-polisher-model: claude-sonnet-4-6
+language-polisher-effort: high
+```
+
+- `parallel-interview-reader` — `auto` (default) dispatches one `interview-reader` per interview in parallel when the sample is ≥4 interviews. `always` forces it. `never` reads inline.
+- `max-parallel-readers` — cap on concurrent `interview-reader` calls. Default 6. Lower for token-constrained sessions.
+- **Model + effort defaults are tuned per agent role** (M1, set when Opus 4.8 released):
+  - `interview-reader` — **Haiku 4.5, medium effort.** Verbatim extraction in parallel. Cheap, fast, sufficient for the rule-following extraction; bump to high for code-switching or stitched-speech-heavy samples.
+  - `thematic-analyser` — **Opus 4.8, high effort.** Cross-cutting synthesis is now obligatory and quality-critical. High (not xhigh) because the output is bounded (4–7 themes); adaptive thinking handles the close calls. Bump to xhigh for samples ≥ 20 interviews.
+  - `archetype-drafter` — **Opus 4.8, xhigh effort.** The most quality-critical agent in the plugin. Opus 4.8's "more honest, less likely to allow flaws to pass" property maps directly onto the traceability self-check. xhigh per Anthropic's own guidance for "difficult tasks and long-running workflows".
+  - `audit-runner` — **Opus 4.8, xhigh effort.** Seven-check audit; the safety net that catches what archetype-drafter missed. xhigh for the same long-running-workflow reason.
+  - `card-renderer` — **Sonnet 4.6, high effort.** Mechanical HTML rendering with cross-coupled rules; opus is overspec, sonnet has stronger HTML/CSS rule-application than older Sonnet generations.
+  - `language-polisher` — **Sonnet 4.6, high effort.** Swedish-idiom polish on already-drafted material. Sonnet's prose handling in Swedish is noticeably more natural than Opus at the second-pass stage where the structural work is done and only voice/idiom remain. (Step 7 — see `polish-language` skill.)
+
+Down-grading any of these saves cost but materially lowers quality. Do it only for prototype/dry-run sessions, and re-run with the defaults before client delivery.
+
+---
+
+## file-format
+
+```
+working: md
+client-deliverable: docx
+keep-raw-docx: yes
+```
+
+- `working` — always `md` for working files. Don't change.
+- `client-deliverable` — `docx` (default) for cover document, themes report, audit report. PDF for designed cards is non-negotiable.
+- `keep-raw-docx` — `yes` (default) preserves the originally-uploaded `.docx` alongside the converted `.md` in `01-interviews/` so the analyst can audit the conversion.
+
+---
+
+## Worked example
+
+Below is the configuration the Naturvårdsverket v1 project ran with:
+
+```
+language:
+  default: sv
+  client-deliverable: sv
+  allow-mixed-quotes: yes
+
+anonymisation:
+  policy: stockholm-carve-out
+  city-keep-list: Stockholm, Hornsgatan, Södermalm, Sofo, Mariatorget, Liljeholmen, Norrmalm, Vasastan
+  city-redact-everywhere-else: yes
+  indirect-identifier-strictness: high
+  age-bracket-rule: explicit-statement-only
+
+methodology:
+  thematic-analysis: reflexive-ta
+  personas: cooper
+  design: antrop-brand
+  ask-first: yes
+
+brand-overrides:
+  brand-spec: default
+  illustrations-dir: (none)
+  print-spec: a3-landscape-fogra39
+  allow-gemini-image-fallback: yes
+```
+
+If a future project needs different settings — different anonymisation rule, different brand, English deliverable — change the file. Every skill picks up the new defaults on its next run.

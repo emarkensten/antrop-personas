@@ -1,0 +1,28 @@
+{
+  "name": "antrop-personas",
+  "owner": {
+    "name": "Antrop"
+  },
+  "metadata": {
+    "description": "Antrop's qualitative-research pipeline for behavioural personas — checkpoint-gated, brand-aware",
+    "version": "0.9.0-rc7.1"
+  },
+  "plugins": [
+    {
+      "name": "antrop-personas",
+      "source": {
+        "source": "local",
+        "path": "."
+      },
+      "description": "Ten checkpoint-gated skills from raw interview to Antrop-branded persona deliverable — Excel framework, double-sided cards, narrative prose, AI portraits, Swedish polish pass, baseline comparison.",
+      "version": "0.9.0-rc7.1",
+      "keywords": [
+        "personas",
+        "qualitative-research",
+        "ux-research",
+        "antrop",
+        "baseline-comparison"
+      ]
+    }
+  ]
+}

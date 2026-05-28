@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Interview cards</title>
+<style>
+@page {
+  size: A3 landscape;
+  margin: 12mm;
+}
+
+:root {
+  /* Pulls from antrop-design-tokens.css when the plugin is rendering inside the persona pipeline.
+     Inline fallback values here so the file renders standalone if needed. */
+  --antrop-mörkblå: #0b3954;
+  --antrop-vinröd: #8b1c2b;
+  --antrop-mörkgrön: #1f3a2d;
+  --antrop-ljusgul: #f4eccd;
+  --antrop-text: #1a1a1a;
+  --antrop-muted: #6b6b6b;
+  --antrop-border: #d0d0d0;
+
+  --font-display: "TT Norms", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "Martian Mono", "JetBrains Mono", monospace;
+  --font-italic: "Playfair Display", Georgia, serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-display);
+  color: var(--antrop-text);
+  background: white;
+}
+
+.card {
+  width: 100%;
+  height: 297mm;        /* A3 landscape height = 297mm; width = 420mm */
+  padding: 0;
+  page-break-after: always;
+  display: grid;
+  grid-template-columns: 240px 1fr 280px;
+  grid-template-rows: 80px auto;
+  gap: 8mm;
+}
+
+.card-title {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 28pt;
+  letter-spacing: -0.02em;
+  border-bottom: 2px solid var(--antrop-text);
+  padding-bottom: 4mm;
+}
+
+.card-title .project {
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+/* Left column: portrait + demographics */
+.column-left {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6mm;
+}
+
+.portrait {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 0;          /* hard-edged, brand rule */
+  overflow: hidden;
+  background: var(--antrop-ljusgul);
+}
+
+.portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.initials-disc {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--antrop-mörkblå);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 48pt;
+  font-weight: 700;
+}
+
+.demographics {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2mm;
+  font-size: 10pt;
+}
+
+.demographics .row {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.demographics .label {
+  font-family: var(--font-mono);
+  font-size: 9pt;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--antrop-muted);
+  font-weight: 700;
+}
+
+.demographics .value {
+  font-family: var(--font-display);
+  font-weight: 500;
+}
+
+/* Middle column: content */
+.column-middle {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6mm;
+}
+
+.section {
+  border: 1px solid var(--antrop-border);
+  padding: 4mm;
+}
+
+.section h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13pt;
+  margin: 0 0 3mm 0;
+}
+
+.section ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.section li {
+  font-size: 10pt;
+  line-height: 1.4;
+  padding-left: 14px;
+  position: relative;
+  margin-bottom: 2mm;
+}
+
+.section li:before {
+  content: "–";
+  position: absolute;
+  left: 0;
+  color: var(--antrop-muted);
+}
+
+/* Right column: quotes + side-fields */
+.column-right {
+  grid-column: 3;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6mm;
+}
+
+.quotes {
+  background: var(--antrop-ljusgul);
+  padding: 4mm;
+}
+
+.quotes h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13pt;
+  margin: 0 0 3mm 0;
+}
+
+.quotes blockquote {
+  font-family: var(--font-italic);
+  font-style: italic;
+  font-size: 10.5pt;
+  line-height: 1.35;
+  margin: 0 0 3mm 0;
+  padding: 0;
+}
+
+.quotes blockquote:not(:last-child):after {
+  content: "";
+  display: block;
+  height: 1px;
+  background: var(--antrop-text);
+  opacity: 0.15;
+  margin-top: 3mm;
+}
+
+.quotes .source {
+  font-family: var(--font-mono);
+  font-size: 8pt;
+  color: var(--antrop-muted);
+  display: block;
+  margin-top: 1mm;
+}
+
+.side-section {
+  border: 1px solid var(--antrop-border);
+  padding: 4mm;
+}
+
+.side-section h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12pt;
+  margin: 0 0 3mm 0;
+}
+
+.side-section ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.side-section li {
+  font-size: 9.5pt;
+  line-height: 1.35;
+  padding-left: 12px;
+  position: relative;
+  margin-bottom: 1.5mm;
+}
+
+.side-section li:before {
+  content: "–";
+  position: absolute;
+  left: 0;
+  color: var(--antrop-muted);
+}
+
+.other-section {
+  font-size: 9.5pt;
+  line-height: 1.4;
+}
+
+/* Print fidelity */
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<!-- Template card. Duplicate the .card block once per participant. -->
+<!-- Tokens to replace per card (the renderer fills these in):
+       {{CARD_TITLE}}             - top-left big text, e.g. "INTERVJUKORT"
+       {{PROJECT_NAME}}           - lighter weight after title, e.g. "AMF SPARAFASEN"
+       {{PORTRAIT_OR_INITIALS}}   - either <img src="portraits/IP07.png" alt=""> OR
+                                    <div class="initials-disc">IP07</div>
+       {{AVTALSOMRADE}}           - domain segment value
+       {{ALDER}}                  - age value or "[?]" if not stated
+       {{LOPNUMMER}}              - IP-id / reference number
+       {{SEGMENT}}                - secondary segmentation
+       {{CIVILSTATUS}}            - marital status or "—" if not relevant
+       {{SYSSELSATTNING}}         - occupation
+       {{QUOTES_BLOCK}}           - one or more <blockquote>…</blockquote> elements
+       {{LEFT_SECTION_TITLE}}     - e.g. "Ekonomiskt intresse & kunnande"
+       {{LEFT_SECTION_BULLETS}}   - <li>…</li> bullets
+       {{MIDDLE_SECTION_TITLE}}   - e.g. "Inställning, behov/problem & drivkrafter"
+       {{MIDDLE_SECTION_BULLETS}} - <li>…</li> bullets
+       {{RIGHT_SECTION_TITLE}}    - e.g. "Skulle vara bättre om…"
+       {{RIGHT_SECTION_BULLETS}}  - <li>…</li> bullets
+       {{OTHER_CONTENT}}          - free text for Övrigt / Other section
+  -->
+
+<div class="card">
+  <div class="card-title">
+    {{CARD_TITLE}}<span class="project">{{PROJECT_NAME}}</span>
+  </div>
+
+  <div class="column-left">
+    <div class="portrait">{{PORTRAIT_OR_INITIALS}}</div>
+    <div class="demographics">
+      <div class="row"><span class="label">Avtalsområde:</span> <span class="value">{{AVTALSOMRADE}}</span></div>
+      <div class="row"><span class="label">Ålder:</span> <span class="value">{{ALDER}}</span></div>
+      <div class="row"><span class="label">Löpnummer:</span> <span class="value">{{LOPNUMMER}}</span></div>
+      <div class="row"><span class="label">Segment:</span> <span class="value">{{SEGMENT}}</span></div>
+      <div class="row"><span class="label">Civilstatus:</span> <span class="value">{{CIVILSTATUS}}</span></div>
+      <div class="row"><span class="label">Sysselsättning:</span> <span class="value">{{SYSSELSATTNING}}</span></div>
+    </div>
+  </div>
+
+  <div class="column-middle">
+    <div class="section">
+      <h3>{{LEFT_SECTION_TITLE}}</h3>
+      <ul>{{LEFT_SECTION_BULLETS}}</ul>
+    </div>
+    <div class="section">
+      <h3>{{MIDDLE_SECTION_TITLE}}</h3>
+      <ul>{{MIDDLE_SECTION_BULLETS}}</ul>
+    </div>
+  </div>
+
+  <div class="column-right">
+    <div class="quotes">
+      <h3>Bra citat:</h3>
+      {{QUOTES_BLOCK}}
+    </div>
+    <div class="side-section">
+      <h3>{{RIGHT_SECTION_TITLE}}</h3>
+      <ul>{{RIGHT_SECTION_BULLETS}}</ul>
+    </div>
+    <div class="side-section other-section">
+      <h3>Övrigt</h3>
+      {{OTHER_CONTENT}}
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

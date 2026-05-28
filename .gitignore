@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+
+# macOS
+.DS_Store
+
+# Node (only present in scratch project folders, never in the plugin)
+node_modules/
+
+# Packed plugin artefacts
+*.plugin
