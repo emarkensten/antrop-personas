@@ -6,7 +6,33 @@ The early release-candidate history (rc5–rc7) was not documented in detail at 
 time; the entries below reconstruct it honestly from the manifest, the validation
 report, and the source. Only the headline changes are recorded for those.
 
-## [0.9.0-rc7.1] — 2026-05 (current)
+## [0.10.0-rc1] — 2026-05 (current)
+
+- **Autonomous mode (`process.mode: auto`)** — a deliberate, explicit switch for
+  unattended end-to-end runs (scheduled / overnight Cowork jobs). Every
+  checkpoint — including the three otherwise-non-skippable ones (cluster lock B2,
+  archetype line-up I1, pre-design briefing D0) — applies its **documented
+  default**, logs the decision to `09-auto/auto-decisions.md`, and proceeds
+  without pausing. **Quality is not reduced**: every interview is read, the full
+  seven-check audit runs, AI portraits (`gemini-image-gen`) and the print-PDF are
+  produced, the Swedish polish pass runs, the full bundle is built. Distinct from
+  `dry-run` (reduced preview) and `skip-checkpoints` (synthetic/test).
+- Open CRITICAL audit findings no longer halt an auto run — they stamp a loud
+  *"⚠ AUTONOMOUS RUN — analyst review pending"* banner on the cards + cover and
+  set `state.json.auto_review_required`, preserving the H22 safety signal.
+- **`run-pipeline` orchestrator skill** (11th skill) — sets `mode: auto` and
+  drives all eight main steps + enabled side-branches in order, ending with
+  `09-auto/MORNING-REVIEW.md` (ordered decisions, `[inferred]` slots, audit
+  counts, open criticals, "what to check first").
+- **`start-persona-project`** gains `--auto` and `--run-all` flags; `--run-all`
+  scaffolds then hands off to `run-pipeline` for a one-shot scheduled run.
+- New state fields: `mode`, `auto_decision_log`, `auto_review_required`. New
+  config keys: `process.mode`, `process.auto-decision-log`. New project folder:
+  `09-auto/`.
+- Fixed stale counts in the `start-persona-project` command ("six required
+  steps", "seven cross-cutting principles", "seven skills").
+
+## [0.9.0-rc7.1] — 2026-05
 
 - **`polish-language` skill** (main-path step 7) added: second-pass language
   polish of validated deliverables — catches non-idiomatic Swedish (or the

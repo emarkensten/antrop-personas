@@ -1,6 +1,6 @@
 ---
 description: Scaffold a persona-research project and choose where to start
-argument-hint: [project-name] [--input-dir <path>] [--baseline <path>]
+argument-hint: [project-name] [--input-dir <path>] [--baseline <path>] [--auto] [--run-all]
 allowed-tools: Read, Write, Bash, AskUserQuestion, Glob
 ---
 
@@ -11,6 +11,8 @@ Set up a new persona-research project in the user's working folder and orient th
 - `$1` (optional) — short project name (e.g. "naturvardsverket-v1"). If omitted, ask the user.
 - `--input-dir <path>` (optional) — absolute or relative path to a folder containing raw interview files. When set, the plugin records this in `state.json` and `.persona-config.md` and **every later skill reads interviews from there instead of the default `01-interviews/`**. Useful when interviews live in a shared Drive folder or any subfolder layout the analyst already has (`intervjuer/pdf/`, `Transkriberingar/`, `cleaned interviews/`, etc — see A1 below).
 - `--baseline <path>` (optional) — absolute or relative path to a previous persona deliverable (PDF, docx, markdown folder, or zip). Recorded in `state.json`; after `generate-archetypes` the plugin asks "want to run compare-baseline against `<path>` now?". See `compare-baseline` skill for the full Mode-B comparison flow.
+- `--auto` (optional) — set the project to **autonomous mode** (`process.mode: auto` in `.persona-config.md` and `mode: "auto"` in `state.json`). Every later checkpoint applies its documented default and logs it instead of pausing — for unattended / scheduled runs. Full quality is preserved (portraits + PDF still produced); distinct from `dry-run` and `skip-checkpoints`. See `${CLAUDE_PLUGIN_ROOT}/references/cross-cutting-principles.md` § "`mode` (autonomous run)".
+- `--run-all` (optional, implies `--auto`) — after scaffolding, **immediately run the whole pipeline end-to-end** by handing off to the `run-pipeline` skill. This is the one-shot entry for scheduled Cowork jobs: `/antrop-personas:start-persona-project <name> --input-dir <path> --run-all` scaffolds the project and produces a finished, packaged deliverable plus `09-auto/MORNING-REVIEW.md` with no further input.
 
 ## What to do
 
@@ -19,7 +21,11 @@ Set up a new persona-research project in the user's working folder and orient th
 2. **Parse optional flags from the rest of the invocation:**
    - `--input-dir <path>` → store as `input_dir` in `state.json` and write the same value under `interviews` in `.persona-config.md`.
    - `--baseline <path>` → store as `baseline_path` in `state.json` and write under `compare-baseline` in `.persona-config.md`.
-   Both flags are optional. If absent, defaults apply (interviews under `personas-project/<project>/01-interviews/`, no baseline set). The analyst can add either flag's value later by editing `.persona-config.md` — the next skill run picks them up.
+   - `--auto` → set `mode: "auto"` in `state.json` and `process.mode: auto` in `.persona-config.md`.
+   - `--run-all` → implies `--auto`; remember to hand off to the `run-pipeline` skill at the end (see step 9).
+   Both path flags are optional. If absent, defaults apply (interviews under `personas-project/<project>/01-interviews/`, no baseline set). The analyst can add either flag's value later by editing `.persona-config.md` — the next skill run picks them up.
+
+   **If `--auto` or `--run-all` is set, skip the interactive questions in steps 4, 5b, and 6** — apply the documented defaults (language `sv`, methodology `cooper`, brand `antrop-brand`, unless overridden by flags or an existing `.persona-config.md`) and record them. An autonomous run has no one to answer prompts; the choices are logged in `09-auto/auto-decisions.md` by `run-pipeline` instead.
 
 3. **Auto-discover existing interviews in the input directory.** If `--input-dir` was set OR the analyst is starting from an existing folder of interviews, run a recursive `Glob` against the input dir for known extensions (`*.pdf`, `*.docx`, `*.md`, `*.txt`) and surface the file list to the analyst with:
 
@@ -53,7 +59,8 @@ Set up a new persona-research project in the user's working folder and orient th
    ├── 05-validation/      # audit findings + polished audit report
    ├── 06-design/          # designed persona cards (HTML + PDF) + design-handoff/
    ├── 07-polish/          # language-polish diff log (required step — second pass on Swedish)
-   └── 08-package/         # final client bundle
+   ├── 08-package/         # final client bundle
+   └── 09-auto/            # auto-mode decision log + MORNING-REVIEW.md (created only on autonomous runs)
    ```
 
    Initialise `state.json` with every step set to `pending`. Include the optional fields from step 2 when set (`input_dir`, `baseline_path`). Schema in `${CLAUDE_PLUGIN_ROOT}/references/pipeline-state.md`.
@@ -79,7 +86,7 @@ Set up a new persona-research project in the user's working folder and orient th
 
 6. **Ask the user where they want to start.** The pipeline supports entering at any step — they may already have cleaned transcripts, or already have themes, or be coming back to design a previously generated set of archetypes.
 
-   Orient the analyst first: the pipeline has **six required steps for quality** plus **three optional side-branches**.
+   Orient the analyst first: the pipeline has **eight required steps for quality** plus **two optional side-branches** (and the `run-pipeline` orchestrator for unattended runs).
 
    **Required for quality (don't skip):**
    - Step 1 · Clean a raw interview transcript — `clean-interview` (skippable only if transcripts are already cleaned + anonymised by hand)
@@ -98,7 +105,7 @@ Set up a new persona-research project in the user's working folder and orient th
 
    Use AskUserQuestion to let the analyst pick the starting step. List the eight required steps; mention the side-branches in the briefing text but don't fill option slots with them.
 
-7. **Brief the user on the seven cross-cutting principles** that every skill in this plugin follows. They are documented in `${CLAUDE_PLUGIN_ROOT}/references/cross-cutting-principles.md`. Read that file and surface the headline of each principle (don't dump the file in chat — summarise):
+7. **Brief the user on the five cross-cutting principles** that every skill in this plugin follows (plus the two shared mechanics below). They are documented in `${CLAUDE_PLUGIN_ROOT}/references/cross-cutting-principles.md`. Read that file and surface the headline of each (don't dump the file in chat — summarise):
 
    - Don't infer — ask, or flag the gap
    - Strategic recommendations live in their own section
@@ -110,10 +117,12 @@ Set up a new persona-research project in the user's working folder and orient th
 
 8. **Hand off to the chosen skill.** Invoke it with the project context. Do not start the next step's work yourself — invoke the actual skill so the user gets that skill's full checkpoint flow.
 
+9. **If `--run-all` was set, skip steps 6–8's interactive hand-off and invoke the `run-pipeline` skill instead.** Pass the project context (name, `input_dir`, `baseline_path`, resolved language/methodology/brand). `run-pipeline` sets `mode: auto`, runs every required step in order, generates AI portraits and the print-PDF, packages the bundle, and writes `09-auto/MORNING-REVIEW.md`. Do not run the steps yourself — invoke `run-pipeline` so the orchestration and decision-logging happen in one place. This is the path a scheduled Cowork job takes.
+
 ## Tone
 
 Match the **language the analyst picked in step 2**. If they picked `sv`, all your conversation in this command is in Swedish. If `en`, English. If `other`, match whatever they specified. Default to Swedish only if the analyst hasn't answered the language question yet. Don't dump the whole pipeline in front of them — orient briefly, then start the chosen step.
 
 ## What this command does NOT do
 
-It does not produce any analytical content of its own. It is pure scaffolding + orientation. The seven skills do the work.
+It does not produce any analytical content of its own. It is pure scaffolding + orientation. The pipeline skills do the work (and `run-pipeline` orchestrates them on an unattended run).

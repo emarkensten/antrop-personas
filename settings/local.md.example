@@ -149,17 +149,21 @@ behavior-scale: yes
 ## process
 
 ```
+mode: interactive
 strict-checkpoints: yes
 skip-checkpoints: no
 dry-run: no
+auto-decision-log: 09-auto/auto-decisions.md
 require_analyst_approval_checkpoints:
   - frame-and-cluster:B2
   - generate-archetypes:I1
   - design-archetypes:D0
 ```
 
-- `strict-checkpoints` — `yes` (default, I1) means the three analyst-approval checkpoints (B2 after `frame-and-cluster`, I1 after `generate-archetypes`, D0 before `design-archetypes`) BLOCK pipeline progress until the analyst explicitly says "fortsätt" / "continue". Other checkpoints are also enforced but recoverable. `no` lets every checkpoint be skipped silently — discouraged.
-- `skip-checkpoints` — `yes` skips even the strict ones (test mode). Triggers a loud warning: *"You have skipped critical analytical checkpoints — deliverable quality may be reduced."* Use only when running synthetic test cases. **Important:** a session-level instruction such as "kör på defaultvärden utan frågor" does **not** count as setting this flag — only an explicit `skip-checkpoints: yes` in `.persona-config.md` bypasses these. See `references/cross-cutting-principles.md` § "What `strict-checkpoints: yes` is **not** overridden by".
+- `mode` — `interactive` (default) or `auto`. **`auto` is the unattended-run switch**: schedule the whole pipeline (e.g. in Claude Cowork) and wake up to finished, full-quality personas — AI portraits and print-PDF included — with no human in the loop. In `auto` mode every checkpoint (including the three strict ones below) applies its documented default, logs the decision to `auto-decision-log`, and proceeds; quality is **not** reduced. Open CRITICAL audit findings do not halt the run but stamp a loud "analyst review pending" banner on the cards + cover. Set it here, or pass `--auto` to `start-persona-project`, or invoke the `run-pipeline` skill. Distinct from `dry-run` (reduced preview) and `skip-checkpoints` (synthetic). See `references/cross-cutting-principles.md` § "`mode` (autonomous run)".
+- `auto-decision-log` — relative path (from the project root) where `auto` mode records every proposal + the default decision it took. Default `09-auto/auto-decisions.md`. Ignored in `interactive` mode.
+- `strict-checkpoints` — `yes` (default, I1) means the three analyst-approval checkpoints (B2 after `frame-and-cluster`, I1 after `generate-archetypes`, D0 before `design-archetypes`) BLOCK pipeline progress until the analyst explicitly says "fortsätt" / "continue". Other checkpoints are also enforced but recoverable. `no` lets every checkpoint be skipped silently — discouraged. **In `mode: auto` the strict checkpoints do not block** — they apply their default and log it.
+- `skip-checkpoints` — `yes` skips even the strict ones **and reduces the work behind them** (synthetic / test mode). Triggers a loud warning: *"You have skipped critical analytical checkpoints — deliverable quality may be reduced."* Use only when running synthetic test cases. **Important:** a session-level instruction such as "kör på defaultvärden utan frågor" does **not** count as setting this flag — only an explicit `skip-checkpoints: yes` in `.persona-config.md` bypasses these. **For a full-quality unattended run, use `mode: auto` instead** — it applies the same defaults but keeps every step at full depth and does not stamp the deliverable synthetic. See `references/cross-cutting-principles.md` § "What `strict-checkpoints: yes` is **not** overridden by".
 - `require_analyst_approval_checkpoints` — list of `<skill>:<beat-id>` entries that must hold an analyst-approval gate even under "no questions" framing. Default covers the three load-bearing analytical decisions. The analyst may add (e.g. `validate-archetypes:V0`) or remove entries by hand-editing. Removing an entry is an explicit analyst choice and does not emit a warning.
 - `dry-run` — `yes` (I2) runs every skill in preview mode:
   - `frame-and-cluster` plots only 8 of N interviews

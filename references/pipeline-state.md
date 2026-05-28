@@ -11,6 +11,7 @@ The point: a skill should never silently assume an earlier step has run. If `val
   "project_name": "naturvardsverket-v1",
   "created_at": "2026-05-12T09:30:00Z",
   "language": "sv",
+  "mode": "interactive",
   "methodology": {
     "thematic-analysis": "reflexive-ta",
     "personas": "cooper",
@@ -182,6 +183,21 @@ Side-branch skills do not appear in the required-before table above. They can be
 - `project_brief_path` — relative path to `project-brief.md` (P4). Same use as above.
 - `has_customer_persona` — boolean, written by `generate-archetypes` at its Produce beat when a CUSTOMER archetype was included. `design-archetypes` reads this to know whether to render the customer-role banner.
 - `has_served_persona` — boolean, same logic for SERVED archetypes.
+- `mode` — `"interactive"` (default) or `"auto"`. Mirrors `process.mode` from `.persona-config.md`. When `"auto"`, every skill applies documented defaults at its Checkpoint beat, logs them to `auto_decision_log`, and proceeds without pausing. Set by `start-persona-project --auto`, by the `run-pipeline` skill, or by hand-editing. See `references/cross-cutting-principles.md` § "`mode` (autonomous run)".
+- `auto_decision_log` — relative path to the auto-mode decision log. Default `"09-auto/auto-decisions.md"`. Only written in `mode: auto`.
+- `auto_review_required` — boolean, set `true` by `design-archetypes` (or any step) when `mode: auto` produced output that needs analyst review before client use — most importantly when `open_critical_findings` was non-empty at design time. `package-for-client` reads it to decide whether to stamp the "⚠ AUTONOMOUS RUN — analyst review pending" banner on the cover.
+
+## Autonomous mode (`mode: auto`)
+
+When `state.json.mode == "auto"` (or `.persona-config.md` sets `process.mode: auto`):
+
+- Every skill runs its full five-beat flow, but **beat 3 (Checkpoint) does not pause** — it applies the documented default, appends a timestamped entry to `auto_decision_log`, prints one `AUTO ▸ <skill>:<beat>` line, and proceeds.
+- The three otherwise-non-skippable gates (`frame-and-cluster` B2, `generate-archetypes` I1, `design-archetypes` D0) behave the same way — auto mode is the deliberate, explicit authorisation the strict-checkpoint rule reserves for config.
+- The `open_critical_findings` gate in `design-archetypes` does **not** halt; it sets `auto_review_required: true`, logs the findings, and stamps the review banner instead.
+- The run ends with `09-auto/MORNING-REVIEW.md`: ordered decision list, `[inferred]` slots, audit counts, open criticals, and "what to check first".
+- Quality is not reduced (contrast `dry-run` and `skip-checkpoints`). Portraits via `gemini-image-gen` and the print-PDF are always produced.
+
+The orchestrator skill `run-pipeline` is the normal entry point for an auto run: it sets `mode: auto`, runs every required step in order (honouring the required-before contract), offers the side-branches per config, and writes the morning-review summary.
 
 ## Example: validate-archetypes with no archetypes yet
 

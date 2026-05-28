@@ -108,11 +108,14 @@ Bundle structure:
 ```
 
 Cover document structure:
+- **Review banner (conditional)** — if `state.json.mode == "auto"` OR `state.json.auto_review_required == true`, the cover opens with a prominent banner before the executive summary: **"⚠ AUTONOMOUS RUN — this bundle was produced unattended with documented defaults. Decisions are logged in `09-auto/auto-decisions.md` / `09-auto/MORNING-REVIEW.md`. \<N\> open CRITICAL audit findings were not reviewed by an analyst. Review before any client use."** (Drop the open-CRITICAL clause if `open_critical_findings` is empty.) This is the review-pending stamp for full-quality auto runs — distinct from the `skip-checkpoints` synthetic stamp.
 - **Executive summary** — 3-5 sentences: what the research found, how many archetypes, what's primary and what's negative
 - **What's in this bundle** — the file list with one-line descriptions
 - **How to read it** — recommended order, with notes on which artefact answers which question
 - **Known limitations** — surface the top 3 findings from the audit. Don't hide them.
 - **Next steps** — what the client could do with this (workshop, strategy work, further quantitative validation)
+
+**Morning-review summary (auto mode).** When `state.json.mode == "auto"`, also write `09-auto/MORNING-REVIEW.md` and place it at the top of the bundle (`00b — MORNING-REVIEW.md`): the ordered list of every auto-decision from `auto-decisions.md`, every `[inferred]` slot across archetypes, the audit finding counts, any open CRITICAL findings, and a one-line "what to check first". This is the analyst's entry point when they wake up.
 
 ### 5. Falsify
 Run a **last-mile self-check** before declaring done:

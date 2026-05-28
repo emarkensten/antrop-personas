@@ -1,8 +1,8 @@
 # antrop-personas
 
-Antrop's qualitative-research pipeline for behavioural personas — from raw interview to brand-designed deliverable. **Ten** checkpoint-gated skills that keep the analyst as the decision-maker and Claude as the heavy-lifter.
+Antrop's qualitative-research pipeline for behavioural personas — from raw interview to brand-designed deliverable. **Eleven** skills — ten checkpoint-gated steps that keep the analyst as the decision-maker and Claude as the heavy-lifter, plus a `run-pipeline` orchestrator for unattended end-to-end runs.
 
-Built from the Naturvårdsverket v1 project (Stockholm, 2026); v0.9.0-rc7.1 bakes in lessons from the second end-to-end test (2026-05-28) — Excel as the working format for frame-and-cluster, narrative prose on the back of every persona card, AI-photo portraits with locked series style, baseline comparison as a built-in capability, and a dedicated language-polish pass.
+Built from the Naturvårdsverket v1 project (Stockholm, 2026); v0.10.0-rc1 bakes in lessons from the second end-to-end test (2026-05-28) — Excel as the working format for frame-and-cluster, narrative prose on the back of every persona card, AI-photo portraits with locked series style, baseline comparison as a built-in capability, and a dedicated language-polish pass.
 
 ## What this plugin does
 
@@ -24,9 +24,34 @@ Plus two **side-branch** skills:
 
 Every skill follows the same five-beat checkpoint flow (read → propose → checkpoint → produce → falsify). The analyst owns every decision; Claude does the reading, cross-referencing, and drafting.
 
+And one **orchestrator** skill:
+
+- **run-pipeline** — runs the whole pipeline end-to-end, unattended, with documented defaults: clean → analyse → frame → generate → validate → design (incl. gemini AI portraits) → polish → package (incl. print-PDF). For scheduled / overnight Cowork runs. See **Autonomous mode** below.
+
+## Autonomous mode (unattended runs)
+
+By default the plugin is **interactive**: it pauses at every checkpoint so the analyst owns each decision. For scheduled or overnight runs — *"make the personas while I sleep"* — there is an explicit **autonomous mode**.
+
+```
+/antrop-personas:start-persona-project myproject --input-dir <path> --run-all
+```
+
+or, in a scheduled Cowork prompt, natural language that triggers `run-pipeline`:
+
+> *"Kör hela personaflödet på intervjuerna i `<mapp>` med defaultval, gemini-porträtt och pdf-export så allt är klart imorgon."*
+
+In autonomous mode (`process.mode: auto`):
+
+- Every checkpoint — **including** the three otherwise-non-skippable ones (cluster lock, archetype line-up, pre-design briefing) — applies its **documented default**, logs the decision to `09-auto/auto-decisions.md`, and proceeds. No pause.
+- **Quality is not reduced.** Every interview is read, the full seven-check audit runs, AI portraits are generated (`gemini-image-gen`, `initials-disc` only on failure — never stick figures), the print-PDF is rendered, the Swedish polish pass runs, the full bundle is built.
+- Open CRITICAL audit findings do **not** halt the run — they stamp a loud *"⚠ AUTONOMOUS RUN — analyst review pending"* banner on the cards and cover.
+- The run ends with `09-auto/MORNING-REVIEW.md`: every decision, every `[inferred]` slot, audit counts, open criticals, and "what to check first".
+
+This is distinct from `dry-run` (a reduced preview) and `skip-checkpoints` (a synthetic/test run marked low-quality). See `references/cross-cutting-principles.md` § "`mode` (autonomous run)".
+
 ## Why a plugin, not one big skill
 
-Qualitative analysis is a sequence of judgement calls, not a pipeline. A monolithic skill hides those calls. Ten skills make them visible — and let you re-run any single step without restarting.
+Qualitative analysis is a sequence of judgement calls, not a pipeline. A monolithic skill hides those calls. Ten step-skills make them visible — and let you re-run any single step without restarting. The eleventh, `run-pipeline`, chains them for an unattended run.
 
 ## Installation
 
@@ -53,6 +78,7 @@ Or invoke any skill directly by mentioning it:
 - *"designa personas i Antrops brand"* → triggers `design-archetypes`
 - *"putsa språket i leveransen"* → triggers `polish-language`
 - *"paketera leveransen"* → triggers `package-for-client`
+- *"kör hela personaflödet automatiskt med defaultval"* → triggers `run-pipeline` (autonomous end-to-end)
 - *"gör intervjukort till workshopväggen"* → triggers `interview-cards`
 
 Triggers work in Swedish and English. See each `skills/<name>/SKILL.md` `metadata.triggers` for the full list (G1 — explicit YAML list, not embedded in description).
@@ -61,7 +87,7 @@ Triggers work in Swedish and English. See each `skills/<name>/SKILL.md` `metadat
 
 | Component | Count | Purpose |
 |-----------|-------|---------|
-| Skills | 10 | 8 main-path steps + `interview-cards` and `compare-baseline` side-branches |
+| Skills | 11 | 8 main-path steps + `interview-cards` and `compare-baseline` side-branches + `run-pipeline` orchestrator |
 | Commands | 1 | `/start-persona-project` orchestration entry point |
 | Agents | 6 | `interview-reader` (haiku, parallel), `thematic-analyser` (opus), `archetype-drafter` (opus — produces bullets + narrative), `audit-runner` (opus), `card-renderer` (sonnet — double-sided cards, AI portraits, audit badges, handoff folder), `language-polisher` (sonnet — second-pass language polish) |
 | Hooks | 0 | None |
@@ -107,9 +133,11 @@ This plugin is currently tuned for Antrop's workflow. If you fork it for another
 
 ## Version
 
-**0.9.0-rc7.1** — release candidate. Incorporates all HIGH + MEDIUM improvements from `IMPROVEMENT_SPEC_v0.9.0-rc4.md` and the post-rc3 E2E test (2026-05-28).
+**0.10.0-rc1** — release candidate. Incorporates all HIGH + MEDIUM improvements from `IMPROVEMENT_SPEC_v0.9.0-rc4.md` and the post-rc3 E2E test (2026-05-28).
 
-Since rc4, rc5–rc7.1 added incremental refinements: a dedicated `polish-language` skill (step 7) with its `language-polisher` agent, and critical-finding gating between `validate-archetypes` and `design-archetypes` (design halts on open critical findings until the analyst resolves or overrides).
+New in 0.10.0: **autonomous mode** (`process.mode: auto`) and the **`run-pipeline`** orchestrator skill, for unattended scheduled/overnight runs that produce full-quality personas (AI portraits + print-PDF) with documented defaults logged for a morning review. Distinct from `dry-run` and `skip-checkpoints`.
+
+Since rc4, rc5–rc7.1 added incremental refinements: a dedicated `polish-language` skill (step 7) with its `language-polisher` agent, and critical-finding gating between `validate-archetypes` and `design-archetypes` (in interactive mode design halts on open critical findings until the analyst resolves or overrides; in auto mode it stamps a review banner and continues).
 
 What's new vs rc3:
 - A1-A3 · Auto-discover interviews in any subfolder; `.pdf` / `.docx` / `.md` / `.txt` input; `--input-dir` override

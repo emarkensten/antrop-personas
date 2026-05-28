@@ -101,7 +101,12 @@ Concretely:
 - ✅ Override: "What language is the project in?", "Which thematic-analysis methodology?", "Which interviews to include?", "Cooper vs JTBD?", "Anonymisation policy?".
 - ❌ Do **not** override: B2 (cluster review), I1 (archetype review), D0 (pre-design briefing). These are the analyst's analytical decisions and cannot be auto-resolved by defaults — they require *the analyst*, not a default value.
 
-If the analyst genuinely wants to skip these three checkpoints (test runs, synthetic data, plugin-development passes), they must set `skip-checkpoints: yes` explicitly. There is no other way to bypass.
+Two explicit config settings — and only these two — bypass the three strict checkpoints. A casual session phrase never does:
+
+- **`mode: auto`** — a deliberate, full-quality unattended run. The gates apply their documented default, log the decision to `09-auto/auto-decisions.md`, and proceed. Output is real and full-quality, stamped "autonomous run — analyst review pending". See § "`mode` (autonomous run)" below.
+- **`skip-checkpoints: yes`** — a synthetic / test run. The gates are skipped *and* the work behind them is reduced; output is stamped synthetic. Use only for test/dev passes.
+
+Setting either requires an explicit edit to `.persona-config.md` (or the equivalent `--auto` flag / `run-pipeline` invocation for `mode: auto`). There is no other way to bypass.
 
 ### `skip-checkpoints` (I1, default `no`)
 
@@ -141,6 +146,40 @@ Setting this to `yes` runs every skill in preview mode:
 | `package-for-client` | Build the bundle structure but skip docx generation |
 
 Use for iteration and prompt-debugging. **Always re-run with `dry-run: no` before delivering.** The skill surfaces a "this output was produced in dry-run mode" banner at the bottom of every artefact.
+
+### `mode` (autonomous run) — `interactive` (default) | `auto`
+
+This is the master switch for **unattended end-to-end runs** — the case where the analyst schedules the whole pipeline (e.g. in Claude Cowork) and wants finished, full-quality personas waiting in the morning, including AI portraits and the print-PDF, with no human in the loop.
+
+`mode: auto` is a deliberate, explicit opt-in. It is **not** the same as either of the other two process flags, and the three must not be confused:
+
+| Flag | What it means | Output quality | Stamp on deliverable |
+|------|---------------|----------------|----------------------|
+| `dry-run: yes` | Preview / prompt-debugging | **Reduced** (subset of interviews, bullets-only, 1 card, fast audit) | "produced in dry-run mode" |
+| `skip-checkpoints: yes` | Synthetic / test data, skip the analytical work behind the gates | **Reduced / unreviewed** | "synthetic run — quality may be reduced" (also in `cover.md`) |
+| `mode: auto` | **Real, full-quality run, executed unattended** | **Full** — every step runs at full depth, portraits + PDF generated | "autonomous run — analyst review pending" + a decision log |
+
+**What `auto` does at each checkpoint.** Instead of pausing and waiting for the analyst, every skill at its Checkpoint beat:
+
+1. Composes the same proposal it would have shown a human.
+2. **Applies the documented default decision** (methodology from config, candidate variables as proposed, cluster memberships as computed, archetype line-up as drafted, the eight pre-design defaults from `pre-design-checklist.md`, `photo-policy: ai-photo`, etc.).
+3. **Writes the proposal + the decision it took** to the auto-decision log (`09-auto/auto-decisions.md`, created on first auto step), with a timestamp and the skill/beat id.
+4. Prints a single `AUTO ▸ <skill>:<beat> — <decision>` line to the chat and **proceeds** to Produce.
+
+This applies to **every** checkpoint, including the three that are otherwise non-skippable (`frame-and-cluster` B2, `generate-archetypes` I1, `design-archetypes` D0). In `auto` mode those gates apply their default and log it rather than halting. This is exactly the "explicit, deliberate analyst choice" the strict-checkpoint rule reserves for config — see § "What `strict-checkpoints: yes` is **not** overridden by" below: the casual session phrase still does not bypass them; `mode: auto` (set in `.persona-config.md`, via `--auto` on `start-persona-project`, or by invoking the `run-pipeline` skill) does.
+
+**Open CRITICAL audit findings under `auto`.** The `validate-archetypes` → `design-archetypes` gate does **not** halt in auto mode (halting would defeat the unattended run). Instead `design-archetypes` proceeds, and:
+
+- records the open findings in `09-auto/auto-decisions.md`,
+- stamps a loud, unmissable banner on the inline preview, on `06-design/README.md`, and on the `package-for-client` cover: **"⚠ AUTONOMOUS RUN — `<N>` open CRITICAL audit findings were NOT reviewed by an analyst. Review before any client use."**
+
+This preserves the H22 safety signal (the SJ Återförsäljare 2026-05-28 failure mode) without blocking completion — the analyst sees it first thing when they review the morning output.
+
+**Quality is NOT reduced in auto mode.** Every interview is read, the full variable set is built, narrative prose is written, the seven-check audit runs at full depth, portraits are generated via `gemini-image-gen` (with the `initials-disc` fallback only on generation failure — never stick figures), the PDF is rendered, the language-polish pass runs, and the full bundle is built. `auto` changes *who approves* (defaults, logged) — not *how much work happens*.
+
+**Morning-review summary.** The final step (`package-for-client`, or `run-pipeline` if it drove the run) writes `09-auto/MORNING-REVIEW.md` at the top of the bundle: every auto-decision in order, every `[inferred]` slot, the audit finding counts, any open CRITICAL findings, and a one-line "what to check first". This is the analyst's entry point when they wake up.
+
+**Falsification still runs.** `mode: auto` never skips beat 5. Every step's built-in self-check (emergent-vs-prompted, placement-difficulty, traceability via `verify-quotes.py`, orphan check) runs and its result is logged. Auto mode removes the human pause, not the safety net.
 
 ## Language
 
