@@ -6,7 +6,17 @@ The early release-candidate history (rc5–rc7) was not documented in detail at 
 time; the entries below reconstruct it honestly from the manifest, the validation
 report, and the source. Only the headline changes are recorded for those.
 
-## [0.11.2-rc1] — 2026-05 (current)
+## [0.11.3-rc1] — 2026-05 (current)
+
+- **Documented the current portrait model.** `DEPENDENCIES.md` now names the
+  correct, verified image model — `gemini-3-pro-image` (Nano Banana Pro), used at
+  `image_size: "2K"`, `aspect_ratio: "4:5"` — with `gemini-2.5-flash-image` as the
+  cheap fallback, plus a known-good code snippet. Notes explicitly that there is
+  no `gemini-3.5-flash` image model and that the model list should be re-checked
+  live before a run. Verified end-to-end by generating the SJ Återförsäljare
+  portrait series (Sara/Hanna/Lars) with `gemini-3-pro-image`.
+
+## [0.11.2-rc1] — 2026-05
 
 Card-design pass after a real-data render review (AMF Sparafasen deck).
 

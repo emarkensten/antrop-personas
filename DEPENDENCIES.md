@@ -43,6 +43,40 @@ If a hard dependency is missing, the depending step **must fail clearly** with t
 | `compare-baseline` | `xlsx` | Producing the comparison docx if the analyst asks for one | Falls back to writing only the markdown + HTML artefact. |
 | `analyse-themes`, `frame-and-cluster`, `validate-archetypes`, `generate-archetypes`, `polish-language` | Sub-agents (see `agents/` — `interview-reader`, `thematic-analyser`, `archetype-drafter`, `audit-runner`, `card-renderer`, `language-polisher`) | Parallel heavy reading for samples ≥4 interviews; `polish-language` delegates to `language-polisher` | Runs inline if sub-agents aren't available — slower and more context-heavy. Surface in chat that the run will be slower without sub-agent support. |
 
+## gemini-image-gen — current model (M2-image)
+
+Portraits should be generated with the **current best** Gemini image model. As of
+2026-05 (per the `google-genai` SDK docs, verified by a live run):
+
+- **`gemini-3-pro-image`** (Nano Banana Pro — Gemini 3 Pro Image) — highest
+  fidelity, "Thinking", supports `image_size` 1K/2K/4K + aspect-ratio control.
+  **Preferred for client-facing persona portraits** (quality over cost). The
+  `gemini-3-pro-image-preview` alias also works. Generate at `image_size: "2K"`,
+  `aspect_ratio: "4:5"` (matches `portrait-style.md` and the portrait disc).
+- `gemini-2.5-flash-image` (Nano Banana) — cheaper/faster fallback for high volume.
+
+There is **no `gemini-3.5-flash` image model** — that name does not exist; don't
+pin it. Google rotates these, so re-check the live `google-genai` docs / model
+list before a run rather than trusting any pinned string. A minimal known-good
+call (used to generate the SJ Återförsäljare portraits):
+
+```python
+from google import genai
+from google.genai import types
+from io import BytesIO; from PIL import Image
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+resp = client.models.generate_content(
+    model="gemini-3-pro-image",
+    contents=open("prompt-<name>.txt").read(),
+    config=types.GenerateContentConfig(
+        image_config=types.ImageConfig(aspect_ratio="4:5", image_size="2K")))
+for part in resp.parts:
+    if getattr(part, "inline_data", None):
+        Image.open(BytesIO(part.inline_data.data)).convert("RGB").save("<name>.jpg", quality=92)
+```
+
+If the `gemini-image-gen` skill pins an older model, update it to `gemini-3-pro-image`.
+
 ## gemini-image-gen ESM-resolution note (J2)
 
 `gemini-image-gen` uses ESM with a hard-coded `import "@google/genai"` that doesn't resolve when the script is invoked from outside its own `node_modules/`.
