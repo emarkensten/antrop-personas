@@ -1,13 +1,13 @@
-# Validation report — antrop-personas v0.11.5-rc3
+# Validation report — antrop-personas v0.11.5-rc4
 
-Date: 2026-05-27 (structural pass); carried forward to v0.11.5-rc3
+Date: 2026-05-27 (structural pass); carried forward to v0.11.5-rc4
 Run by: Cowork session validation pass
 
-> **Note (0.11.5-rc3):** This report was first written at rc2 and has been carried
+> **Note (0.11.5-rc4):** This report was first written at rc2 and has been carried
 > forward. The plugin now ships **10 skills** (added `polish-language`) and
 > **6 agents** (added `language-polisher`). The structural checks below still
 > hold; the end-to-end run was executed on 2026-05-28 (see `HANDOFF_TO_NEW_CHAT.md`).
-> Counts in the table reflect the current 0.11.5-rc3 component set.
+> Counts in the table reflect the current 0.11.5-rc4 component set.
 
 ## Status
 
@@ -25,8 +25,8 @@ Run by: Cowork session validation pass
 |---|-------|--------|-------|
 | 1 | Skill frontmatter (`quick_validate.py`) | PASS (10/10) | All skills validate cleanly. Earlier issue (`version:` at top level) fixed by moving to `metadata.version`. |
 | 2 | Description length | PASS (10/10) | All descriptions within the 1023-char limit. |
-| 3 | Plugin manifest (`.claude-plugin/plugin.json`) | PASS | Valid JSON. Declares dependencies, components, docs. |
-| 4 | Marketplace manifest (`.claude-plugin/marketplace.json`) | PASS | Earlier failure `plugins.0.source: Invalid input` fixed — `source` is now an object `{ source: "local", path: "." }`. |
+| 3 | Plugin manifest (`.claude-plugin/plugin.json`) | PASS | Valid JSON. Standard keys only (name/version/description/author/keywords) — the non-standard `metadata` block (dependencies/components/docs) was removed in 0.11.5-rc2; those live in `DEPENDENCIES.md` / `README.md`. |
+| 4 | Marketplace manifest (`.claude-plugin/marketplace.json`) | PASS | `plugins[].source` is the string `"./"` — the form the current schema expects. (An earlier note claiming it should be an object `{ source: "local", path: "." }` was wrong for today's schema; do **not** "restore" the object form.) |
 | 5 | Pipeline-state contract | PASS (10/10) | Every SKILL.md has a `## Pipeline state` section declaring required-before and config-override behaviour. |
 | 6 | Five-beat checkpoint flow | PASS (10/10) | Every SKILL.md has Read / Propose / Checkpoint / Produce / Falsify as numbered subheadings. |
 | 7 | Hand-off integrity | PASS | Each skill's input paths match the previous skill's output paths. No broken hand-offs. |
@@ -74,4 +74,4 @@ Compared to v0.1.0:
 
 ## Recommendation
 
-Ship v0.11.5-rc3 as the testable artefact. Bump to v1.0.0 only after step 1 above completes cleanly (no regressions vs. the NV v1 reference deliverables).
+Ship v0.11.5-rc4 as the testable artefact. Bump to v1.0.0 only after step 1 above completes cleanly (no regressions vs. the NV v1 reference deliverables).

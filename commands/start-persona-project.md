@@ -1,6 +1,6 @@
 ---
 description: Scaffold a persona project and choose where to start
-argument-hint: [project-name] [--input-dir <path>] [--baseline <path>] [--auto] [--run-all]
+argument-hint: "[project-name] [--input-dir <path>] [--baseline <path>] [--auto] [--run-all]"
 allowed-tools: Read, Write, Bash, AskUserQuestion, Glob
 ---
 

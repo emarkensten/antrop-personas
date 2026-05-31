@@ -6,7 +6,25 @@ The early release-candidate history (rc5–rc7) was not documented in detail at 
 time; the entries below reconstruct it honestly from the manifest, the validation
 report, and the source. Only the headline changes are recorded for those.
 
-## [0.11.5-rc3] — 2026-05 (current)
+## [0.11.5-rc4] — 2026-05 (current)
+
+Defensive hardening + doc corrections after rc3 installed cleanly in Cowork.
+
+- `commands/start-persona-project.md`: **quoted** the `argument-hint` value. The
+  bare-bracket form loads under Claude Code's lenient parser (and is what the
+  official docs show), but `[...]` is a flow-sequence opener in strict YAML and the
+  multiple bracket groups make it invalid there. Quoting is valid under both, with
+  identical display.
+- `VALIDATION_REPORT.md`: corrected two stale claims — `plugin.json` no longer
+  declares a `metadata` block (removed rc2), and `marketplace.json` `source` is
+  correctly the string `"./"` (the old "should be an object" note was wrong for
+  today's schema).
+- `CLAUDE.md`: flipped the argument-hint guidance to "quote it".
+
+No behavioural change — same 11 skills / 6 agents / 1 command. rc3 already installs
+in Cowork; rc4 is a portability/robustness refinement, not a fix for a known failure.
+
+## [0.11.5-rc3] — 2026-05
 
 Second compatibility pass after rc2 still failed Cowork's install. The blocker
 was the **agent** files, not skill metadata. Verified against Anthropic's own

@@ -45,8 +45,11 @@ helpers only).
   (`tools: ["Read", "Grep"]`, **not** a comma-separated string). No `effort:` field
   — not in the schema; effort intent is documented in `DEPENDENCIES.md`. Keep each
   agent's `color` distinct.
-- Command frontmatter: keep `description` **≤60 chars** (`/help` display). Leave
-  `argument-hint` brackets **unquoted** — bare `[arg] [arg]` is the canonical form.
+- Command frontmatter: keep `description` **≤60 chars** (`/help` display). **Quote**
+  the `argument-hint` value (`argument-hint: "[a] [b]"`). Claude Code's lenient
+  parser accepts bare brackets, but a strict YAML parser reads `[...]` as a flow
+  sequence and the multiple bracket groups make it invalid — quoting is valid under
+  both, with identical display.
 - Reference other plugin files as `${CLAUDE_PLUGIN_ROOT}/path`.
 - Keep comments/prose tight; this is a fast-moving internal tool.
 
