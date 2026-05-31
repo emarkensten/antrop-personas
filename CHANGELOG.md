@@ -6,7 +6,23 @@ The early release-candidate history (rc5–rc7) was not documented in detail at 
 time; the entries below reconstruct it honestly from the manifest, the validation
 report, and the source. Only the headline changes are recorded for those.
 
-## [0.11.5-rc4] — 2026-05 (current)
+## [0.11.5-rc5] — 2026-05 (current)
+
+Targets the strict component validator used by the desktop app's "Add plugin →
+Browse file" and the Cowork plugin UI (distinct from `claude plugin validate`,
+which only checks the marketplace manifest and passes).
+
+- `commands/start-persona-project.md`: `allowed-tools` converted from a
+  comma-separated string to a **YAML array** (`["Read", ...]`). The plugin
+  validator's command checklist expects the array form — the same string→array
+  rule already applied to agent `tools` in rc3. This was the last comma-string
+  in any component frontmatter. (rc3's "installed" result was via the *lenient*
+  marketplace path; the strict browse-file/UI path enforces the array form.)
+- `CLAUDE.md`: documented the `allowed-tools` array rule.
+
+No behavioural change — same 11 skills / 6 agents / 1 command.
+
+## [0.11.5-rc4] — 2026-05
 
 Defensive hardening + doc corrections after rc3 installed cleanly in Cowork.
 
