@@ -1,3 +1,17 @@
+> [!IMPORTANT]
+> **Detta repo är arkiverat och har flyttat.** `antrop-personas` distribueras numera
+> som ett plugin i Antrops samlade marketplace **`antrop`** — repo:
+> [`emarkensten/antrop-skills`](https://github.com/emarkensten/antrop-skills).
+>
+> Installera/uppdatera därifrån:
+> ```
+> /plugin marketplace add emarkensten/antrop-skills
+> /plugin install antrop-personas@antrop
+> ```
+> Den gamla marketplace-källan (`emarkensten/antrop-personas`) uppdateras inte längre.
+
+---
+
 # antrop-personas
 
 Antrop's qualitative-research pipeline for behavioural personas — from raw interview to brand-designed deliverable. **Eleven** skills — eight checkpoint-gated main-path steps plus two opt-in side-branches that keep the analyst as the decision-maker and Claude as the heavy-lifter, plus a `run-pipeline` orchestrator for unattended end-to-end runs.
